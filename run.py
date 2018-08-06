@@ -1,5 +1,6 @@
 import os
 import argparse
+import shutil
 
 import random
 import torch
@@ -40,9 +41,10 @@ def parse():
     parser.add_argument('--dataset', default='dsprites', type=str, help="dataset to use")
     parser.add_argument('--output_dir', default='outputs', type=str, help='output directory')
     parser.add_argument('--no-cuda', action='store_true', default=False)
+    parser.add_argument('--nb-test', type=int, default=9, help='number of test samples to visualize the recons of')
     parser.add_argument('--seed', type=int, default=1)
-    parser.add_argument('--log-interval', type=int, default=10)
-    parser.add_argument('--save-interval', type=int, default=200)
+    parser.add_argument('--log-interval', type=int, default=50)
+    parser.add_argument('--save-interval', type=int, default=50)
 
     return parser.parse_args()
 
@@ -59,17 +61,20 @@ def main():
     img_dims, dataloader = _get_dataset(args.dataset)
     dataloader = dataloader(args.batch_size)
 
-    """
     # test images to reconstruct during training
     dataset_size = len(dataloader.dataset)
-    indices = [0] + random.sample(range(1, dataset_size), args.nb_test - 1)
-    testimgs = torch.empty(args.nb_test, *img_dims).to(device)
+    indices = np.hstack((0, np.random.choice(range(1,dataset_size),args.nb_test - 1)))
+    test_imgs = torch.empty(args.nb_test, *img_dims).to(device)
 
     for i, img_idx in enumerate(indices):
-        testimgs[i, 0] = torch.tensor(dataloader.dataset[img_idx][0])
-    """
+        test_imgs[i, 0] = torch.tensor(dataloader.dataset[img_idx][0])
+
+    # Create new dir
+    if os.path.isdir(args.output_dir): shutil.rmtree(args.output_dir)
+    os.makedirs(args.output_dir)
+
     # train
-    net = Trainer(args, dataloader, device)
+    net = Trainer(args, dataloader, device, test_imgs)
     net.train()
 
 

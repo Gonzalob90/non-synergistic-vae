@@ -3,13 +3,15 @@ import numpy as np
 import torch
 import torch.nn.functional as F
 import torch.optim as optim
+import os
 
 from ops import recon_loss, kl_div, permute_dims
+from utils import traverse
 from model import VAE, Discriminator
 
 class Trainer():
 
-    def __init__(self, args, dataloader, device):
+    def __init__(self, args, dataloader, device, test_imgs):
 
         self.device = device
         self.args = args
@@ -19,6 +21,7 @@ class Trainer():
         self.dataset = args.dataset
         self.batch_size = args.batch_size
         self.steps = args.steps
+        self.test_imgs = test_imgs
 
         # Networks & Optimizers
         self.z_dim = args.z_dim
@@ -59,7 +62,7 @@ class Trainer():
 
             for x_true1, x_true2 in self.dataloader:
 
-                #if step == 3000: break
+                if step == 300: break
 
                 step += 1
 
@@ -122,10 +125,10 @@ class Trainer():
                     print("D loss = " + "{:.4f}".format(d_loss))
 
                 # Saving
-                #if not step % self.args.save_interval:
-                #    filename = 'traversal_' + str(step) + '.png'
-                #    filepath = os.path.join(self.args.logdir, filename)
-                #    traverse(self.nets['vae'], self.testimgs, filepath)
+                if not step % self.args.save_interval:
+                    filename = 'traversal_' + str(step) + '.png'
+                    filepath = os.path.join(self.args.output_dir, filename)
+                    traverse(self.net_mode, self.VAE, self.test_imgs, filepath)
 
     def net_mode(self, train):
         if not isinstance(train, bool):
