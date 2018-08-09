@@ -1,4 +1,5 @@
 import numpy as np
+import random
 
 import torch
 import torch.nn.functional as F
@@ -62,7 +63,7 @@ class Trainer():
 
             for x_true1, x_true2 in self.dataloader:
 
-                if step == 300: break
+                if step == 1000: break
 
                 step += 1
 
@@ -97,6 +98,27 @@ class Trainer():
                 self.optim_VAE.zero_grad() #zero gradients the buffer
                 vae_loss.backward(retain_graph = True)
                 self.optim_VAE.step() #Does the step
+
+                ##################
+                #Synergy Max
+
+                # Step 1: compute the argmax of D kl (q(ai | x(i)) || )
+                x_recon, mu, logvar, z = self.VAE(x_true1)
+
+                best_ai =
+
+                # Step 2: select the best K
+
+
+                # Step 3: Use it in the loss
+
+                ###################
+
+                ###################
+                #Synergy VK
+
+
+                ###################
 
                 # Discriminator
                 x_true2 = x_true2.unsqueeze(1).to(self.device)

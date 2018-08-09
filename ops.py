@@ -12,6 +12,17 @@ def kl_div(mu, logvar):
     kld = -0.5 * (1 + logvar - mu ** 2 - logvar.exp()).sum(1).mean()
     return kld
 
+def kl_div_syn(mu, logvar):
+    kld = -0.5 * (1 + logvar - mu ** 2 - logvar.exp()).sum(1)
+    return kld
+
+def kl_div_uni_dim(mu, logvar):
+    kld = -0.5 * (1 + logvar - mu ** 2 - logvar.exp())
+    return kld
+
+def kl_div_mean(mu, logvar):
+    kld = -0.5 * (1 + logvar - mu ** 2 - logvar.exp()).mean(1).mean()
+    return kld
 
 def permute_dims(z):
     # Test for two dim, B X d
