@@ -1,5 +1,5 @@
 import numpy as np
-import random
+from collections import defaultdict
 
 import torch
 import torch.nn.functional as F
@@ -9,6 +9,10 @@ import os
 from ops import recon_loss, kl_div, permute_dims
 from utils import traverse
 from model import VAE, Discriminator
+
+from test import greedy_policy_Smax_discount, I_max_batch
+
+torch.set_printoptions(precision=6)
 
 class Trainer():
 
@@ -44,6 +48,8 @@ class Trainer():
         self.optim_D = optim.Adam(self.D.parameters(), lr=self.lr_D,
                                   betas=(self.beta1_D, self.beta2_D))
 
+        self.alpha = 0.8
+
         self.nets = [self.VAE, self.D]
 
     def train(self):
@@ -57,15 +63,73 @@ class Trainer():
         print("number of epochs {}".format(epochs))
 
         step = 0
+        dict_VAE = defaultdict(list)
+        dict_disc = defaultdict(list)
 
         #for e in range(epochs):
         for e in range(1):
 
             for x_true1, x_true2 in self.dataloader:
 
-                if step == 1000: break
+                if step == 1: break
 
                 step += 1
+
+                for name, params in self.VAE.named_parameters():
+
+                    if name == 'encoder.2.weight':
+                        #size : 32,32,4,4
+                        print("Before VAE optim  encoder step {}".format(step))
+                        if params.grad != None:
+                            if dict_VAE[name] != params.grad:
+                                print("Change in gradients {}".format(name))
+                            print("name {}, params grad {}".format(name, params.grad[0, 0, :, :]))
+                        else:
+                            print("name {}, params grad {}".format(name, params.grad))
+                        dict_VAE[name] = params.grad
+                        print()
+
+                    if name == 'decoder.1.weight':
+
+                        print("Before VAE optim  decoder step {}".format(step))
+                        if params.grad != None:
+                            if dict_VAE[name] != params.grad:
+                                print("Change in gradients {}".format(name))
+                            print("name {}, params grad {}".format(name, params.grad[:5, :2]))
+                        else:
+                            print("name {}, params grad {}".format(name, params.grad))
+                        dict_VAE[name] = params.grad
+                        print()
+
+                    if name == 'decoder.7.weight':
+
+                        print("Before VAE optim  decoder step {}".format(step))
+                        if params.grad != None:
+                            if dict_VAE[name] != params.grad:
+                                print("Change in gradients {}".format(name))
+                            else:
+                                print("No change in gradients {}".format(name))
+                            print("name {}, params grad {}".format(name, params.grad[1, 1, :, :]))
+                        else:
+                            print("name {}, params grad {}".format(name, params.grad))
+                        dict_VAE[name] = params.grad
+                        print()
+
+                for name, params in self.D.named_parameters():
+
+                    if name == 'net.4.weight':
+
+                        print("Before VAE optim  discrim step {}".format(step))
+                        if params.grad != None:
+                            if dict_disc[name] != params.grad:
+                                print("Change in gradients {}".format(name))
+                            else:
+                                print("No change in gradients {}".format(name))
+                            print("name {}, params grad {}".format(name, params.grad[1, 1, :, :]))
+                        else:
+                            print("name {}, params grad {}".format(name, params.grad))
+                        dict_disc[name] = params.grad
+                        print()
 
                 # VAE
                 x_true1 = x_true1.unsqueeze(1).to(self.device)
@@ -99,24 +163,69 @@ class Trainer():
                 vae_loss.backward(retain_graph = True)
                 self.optim_VAE.step() #Does the step
 
+
+                # check if the VAE is optimizing the encoder and decoder
+                for name, params in self.VAE.named_parameters():
+                    if name == 'encoder.2.weight':
+                        #size : 32,32,4,4
+                        print("After VAE optim  encoder step {}".format(step))
+                        print("name {}, params grad {}".format(name, params.grad[0, 0, :, :]))
+                        if dict_VAE[name] != params.grad.data:
+                            print("Change in gradients {}".format(name))
+                        else:
+                            print("No change in gradients {}".format(name))
+                        dict_VAE[name] = params.grad
+                        print()
+
+                    if name == 'decoder.1.weight':
+                        #1024, 128
+                        print("After VAE optim  decoder linear step {}".format(step))
+                        print("name {}, params grad {}".format(name, params.grad[:5, :2]))
+                        if dict_VAE[name] != params.grad:
+                            print("Change in gradients {}".format(name))
+                        else:
+                            print("No change in gradients {}".format(name))
+                        dict_VAE[name] = params
+                        print()
+
+                    if name == 'decoder.7.weight':
+                        print("After VAE optim  decoder step {}".format(step))
+                        print("name {}, params grad {}".format(name, params.grad[1, 1, :, :]))
+                        if dict_VAE[name] != params.grad:
+                            print("Change in gradients {}".format(name))
+                        else:
+                            print("No change in gradients {}".format(name))
+                        print()
+
+                for name, params in self.D.named_parameters():
+
+                    if name == 'net.4.weight':
+                        print("Before VAE optim  discriminator step {}".format(step))
+                        print("name {}, params grad {}".format(name, params.grad[:5,:5]))
+                        if dict_disc[name] != params.grad:
+                            print("Change in gradients {}".format(name))
+                        else:
+                            print("No change in gradients {}".format(name))
+                        print()
+
                 ##################
                 #Synergy Max
+                """
 
                 # Step 1: compute the argmax of D kl (q(ai | x(i)) || )
-                x_recon, mu, logvar, z = self.VAE(x_true1)
+                best_ai = greedy_policy_Smax_discount(self.z_dim, mu,logvar,alpha=0.8)
 
-                best_ai =
-
-                # Step 2: select the best K
-
+                # Step 2: compute the Imax
+                I_max = I_max_batch(best_ai,mu,logvar)
 
                 # Step 3: Use it in the loss
+                syn_loss = self.alpha * I_max
 
-                ###################
-
-                ###################
-                #Synergy VK
-
+                # Step 4: Optimise Syn term
+                self.optim_VAE.zero_grad() #Does the update in VAE network
+                syn_loss.backward()
+                self.optim_VAE.step() #Does the update in VAE network
+                """
 
                 ###################
 
@@ -135,6 +244,51 @@ class Trainer():
                 self.optim_D.zero_grad()
                 d_loss.backward()
                 self.optim_D.step()
+
+                for name, params in self.VAE.named_parameters():
+                    if name == 'encoder.2.weight':
+                        #size : 32,32,4,4
+                        print("After Discriminator optim  encoder step {}".format(step))
+                        print("name {}, params grad {}".format(name, params.grad[0, 0, :, :]))
+                        if dict_VAE[name] != params.grad:
+                            print("Change in gradients {}".format(name))
+                        else:
+                            print("No change in gradients {}".format(name))
+                        dict_VAE[name] = params
+                        print()
+
+                    if name == 'decoder.1.weight':
+                        #1024, 128
+                        print("After Discriminator optim  decoder linear step {}".format(step))
+                        print("name {}, params grad {}".format(name, params.grad[:5, :2]))
+                        if dict_VAE[name] != params.grad:
+                            print("Change in gradients {}".format(name))
+                        else:
+                            print("No change in gradients {}".format(name))
+                        dict_VAE[name] = params
+                        print()
+
+                    if name == 'decoder.7.weight':
+                        print("After Discriminator optim  decoder step {}".format(step))
+                        print("name {}, params grad {}".format(name, params.grad[1, 1, :, :]))
+                        if dict_VAE[name] != params.grad:
+                            print("Change in gradients {}".format(name))
+                        else:
+                            print("No change in gradients {}".format(name))
+                        dict_VAE[name] = params
+                        print()
+
+                for name, params in self.D.named_parameters():
+
+                    if name == 'net.4.weight':
+                        print("Before VAE optim  decoder step {}".format(step))
+                        print("name {}, params grad {}".format(name, params.grad[:5, :5]))
+                        if dict_disc[name] != params.grad:
+                            print("Change in gradients {}".format(name))
+                        else:
+                            print("No change in gradients {}".format(name))
+                        dict_disc[name] = params
+                        print()
 
                 # Logging
                 if step % self.args.log_interval == 0:

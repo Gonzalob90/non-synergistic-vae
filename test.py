@@ -234,7 +234,7 @@ logvar = torch.Tensor([[0.7089, 0.1473, 0.6645, 0.4639, 0.0684, 0.5317, 0.5295, 
 
 
 
-greedy_policy_Smax_discount(10, mu, logvar, 0.8)
-a = kl_div(mu, logvar)
-print(a)
+#greedy_policy_Smax_discount(10, mu, logvar, 0.8)
+#a = kl_div(mu, logvar)
+#print(a)
 
