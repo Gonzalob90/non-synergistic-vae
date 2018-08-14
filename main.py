@@ -63,15 +63,20 @@ class Trainer():
         print("number of epochs {}".format(epochs))
 
         step = 0
-        dict_VAE = defaultdict(list)
-        dict_disc = defaultdict(list)
+        # dict of init opt weights
+        dict_init = {a: defaultdict(list) for a in range(10)}
+        # dict of VAE opt weights
+        #dict_VAE = {a:defaultdict(list) for a in range(10)}
+        dict_VAE = {a: defaultdict(tuple) for a in range(10)}
+        # dict of disc opt weights
+        dict_disc = {a:defaultdict(list) for a in range(10)}
 
         #for e in range(epochs):
         for e in range(1):
 
             for x_true1, x_true2 in self.dataloader:
 
-                if step == 1: break
+                if step == 2: break
 
                 step += 1
 
@@ -80,39 +85,59 @@ class Trainer():
                     if name == 'encoder.2.weight':
                         #size : 32,32,4,4
                         print("Before VAE optim  encoder step {}".format(step))
-                        if params.grad != None:
-                            if dict_VAE[name] != params.grad:
+                        #if params.grad != None:
+                        if step != 1:
+                            if np.array_equal(dict_VAE[name], params.grad.numpy()) == False :
+                            #if dict_VAE[name] != tuple(params.grad.numpy()):
                                 print("Change in gradients {}".format(name))
-                            print("name {}, params grad {}".format(name, params.grad[0, 0, :, :]))
+                                #dict_init[step][name] = params.grad.numpy()
+                                dict_VAE[name] = params.grad.numpy().copy()
+                            else:
+                                print("No change in gradients {}".format(name))
+                            #print("name {}, params grad {}".format(name, params.grad[0, 0, :, :]))
+
                         else:
                             print("name {}, params grad {}".format(name, params.grad))
-                        dict_VAE[name] = params.grad
+                            #dict_init[step][name] = None
+                            dict_VAE[name] = None
                         print()
 
                     if name == 'decoder.1.weight':
 
                         print("Before VAE optim  decoder step {}".format(step))
-                        if params.grad != None:
-                            if dict_VAE[name] != params.grad:
+                        #if params.grad != None:
+                        if step != 1:
+
+                            if np.array_equal(dict_VAE[name], params.grad.numpy()) == False:
+                            #if dict_VAE[name] != tuple(params.grad.numpy()):
                                 print("Change in gradients {}".format(name))
-                            print("name {}, params grad {}".format(name, params.grad[:5, :2]))
+                                dict_VAE[name] = params.grad.numpy().copy()
+                            else:
+                                print("No change in gradients {}".format(name))
+                            #print("name {}, params grad {}".format(name, params.grad[:5, :2]))
                         else:
                             print("name {}, params grad {}".format(name, params.grad))
-                        dict_VAE[name] = params.grad
+                            #dict_init[step][name] = None
+                            dict_VAE[name] = None
                         print()
 
                     if name == 'decoder.7.weight':
 
                         print("Before VAE optim  decoder step {}".format(step))
-                        if params.grad != None:
-                            if dict_VAE[name] != params.grad:
+                        #if params.grad != None:
+                        if step != 1:
+
+                            if np.array_equal(dict_VAE[name], params.grad.numpy()) == False:
+                            #if dict_VAE[name] != tuple(params.grad.numpy()):
                                 print("Change in gradients {}".format(name))
+                                dict_VAE[name] = params.grad.numpy().copy()
                             else:
                                 print("No change in gradients {}".format(name))
-                            print("name {}, params grad {}".format(name, params.grad[1, 1, :, :]))
+                            #print("name {}, params grad {}".format(name, params.grad[1, 1, :, :]))
                         else:
                             print("name {}, params grad {}".format(name, params.grad))
-                        dict_VAE[name] = params.grad
+                            #dict_init[step][name] = None
+                            dict_VAE[name] = None
                         print()
 
                 for name, params in self.D.named_parameters():
@@ -120,15 +145,20 @@ class Trainer():
                     if name == 'net.4.weight':
 
                         print("Before VAE optim  discrim step {}".format(step))
-                        if params.grad != None:
-                            if dict_disc[name] != params.grad:
+                        #if params.grad != None:
+                        if step != 1:
+
+                            if np.array_equal(dict_VAE[name], params.grad.numpy()) == False:
+                            #if dict_VAE[name] != tuple(params.grad.numpy()):
                                 print("Change in gradients {}".format(name))
+                                dict_VAE[name] = params.grad.numpy().copy()
                             else:
                                 print("No change in gradients {}".format(name))
-                            print("name {}, params grad {}".format(name, params.grad[1, 1, :, :]))
+                            #print("name {}, params grad {}".format(name, params.grad[1, 1, :, :]))
                         else:
                             print("name {}, params grad {}".format(name, params.grad))
-                        dict_disc[name] = params.grad
+                            #dict_init[step][name] = None
+                            dict_VAE[name] = None
                         print()
 
                 # VAE
@@ -169,30 +199,37 @@ class Trainer():
                     if name == 'encoder.2.weight':
                         #size : 32,32,4,4
                         print("After VAE optim  encoder step {}".format(step))
-                        print("name {}, params grad {}".format(name, params.grad[0, 0, :, :]))
-                        if dict_VAE[name] != params.grad.data:
+                        #print("name {}, params grad {}".format(name, params.grad[0, 0, :, :]))
+
+                        if np.array_equal(dict_VAE[name], params.grad.numpy()) == False:
+                        #if dict_VAE[name] != tuple(params.grad.numpy()):
                             print("Change in gradients {}".format(name))
+                            dict_VAE[name] = params.grad.numpy().copy()
                         else:
                             print("No change in gradients {}".format(name))
-                        dict_VAE[name] = params.grad
                         print()
 
                     if name == 'decoder.1.weight':
                         #1024, 128
                         print("After VAE optim  decoder linear step {}".format(step))
-                        print("name {}, params grad {}".format(name, params.grad[:5, :2]))
-                        if dict_VAE[name] != params.grad:
+                        #print("name {}, params grad {}".format(name, params.grad[:5, :2]))
+
+                        if np.array_equal(dict_VAE[name], params.grad.numpy()) == False:
+                        #if dict_VAE[name] != tuple(params.grad.numpy()):
                             print("Change in gradients {}".format(name))
+                            dict_VAE[name] = params.grad.numpy().copy()
                         else:
                             print("No change in gradients {}".format(name))
-                        dict_VAE[name] = params
                         print()
 
                     if name == 'decoder.7.weight':
                         print("After VAE optim  decoder step {}".format(step))
-                        print("name {}, params grad {}".format(name, params.grad[1, 1, :, :]))
-                        if dict_VAE[name] != params.grad:
+                        #print("name {}, params grad {}".format(name, params.grad[1, 1, :, :]))
+
+                        if np.array_equal(dict_VAE[name], params.grad.numpy()) == False:
+                        #if dict_VAE[name] != tuple(params.grad.numpy()):
                             print("Change in gradients {}".format(name))
+                            dict_VAE[name] = params.grad.numpy().copy()
                         else:
                             print("No change in gradients {}".format(name))
                         print()
@@ -200,32 +237,41 @@ class Trainer():
                 for name, params in self.D.named_parameters():
 
                     if name == 'net.4.weight':
-                        print("Before VAE optim  discriminator step {}".format(step))
-                        print("name {}, params grad {}".format(name, params.grad[:5,:5]))
-                        if dict_disc[name] != params.grad:
+                        print("After VAE optim  discriminator step {}".format(step))
+                        #print("name {}, params grad {}".format(name, params.grad[:5,:5]))
+
+                        if np.array_equal(dict_VAE[name], params.grad.numpy()) == False:
+                        #if dict_VAE[name] != tuple(params.grad.numpy()):
                             print("Change in gradients {}".format(name))
+                            dict_VAE[name] = params.grad.numpy().copy()
                         else:
                             print("No change in gradients {}".format(name))
                         print()
 
                 ##################
                 #Synergy Max
-                """
+
 
                 # Step 1: compute the argmax of D kl (q(ai | x(i)) || )
                 best_ai = greedy_policy_Smax_discount(self.z_dim, mu,logvar,alpha=0.8)
+                print("best_ai {}".format(best_ai))
+
 
                 # Step 2: compute the Imax
                 I_max = I_max_batch(best_ai,mu,logvar)
+                print("I_max {}".format(I_max))
+
 
                 # Step 3: Use it in the loss
                 syn_loss = self.alpha * I_max
+                print("syn_loss {}".format(syn_loss))
+
 
                 # Step 4: Optimise Syn term
                 self.optim_VAE.zero_grad() #Does the update in VAE network
                 syn_loss.backward()
                 self.optim_VAE.step() #Does the update in VAE network
-                """
+
 
                 ###################
 
@@ -239,55 +285,67 @@ class Trainer():
                 d_loss = 0.5 * (F.cross_entropy(D_z, zeros) + F.cross_entropy(D_z_perm, ones))
                 #print("d_loss {}".format(d_loss))
 
+                #print("dict VAE {}".format(dict_VAE['encoder.2.weight'][0, 0, :, :]))
 
                 # Optimise Discriminator
                 self.optim_D.zero_grad()
                 d_loss.backward()
                 self.optim_D.step()
 
+                #print("dict VAE {}".format(dict_VAE['encoder.2.weight'][0, 0, :, :]))
+
                 for name, params in self.VAE.named_parameters():
                     if name == 'encoder.2.weight':
                         #size : 32,32,4,4
                         print("After Discriminator optim  encoder step {}".format(step))
-                        print("name {}, params grad {}".format(name, params.grad[0, 0, :, :]))
-                        if dict_VAE[name] != params.grad:
+                        #print("name {}, params grad {}".format(name, params.grad[0, 0, :, :]))
+                        #print("dict VAE {}".format(dict_VAE[name][0, 0, :, :]))
+                        #if np.isclose(dict_VAE[name], params.grad.numpy(), rtol=1e-05, atol=1e-08, equal_nan=False): "Works"
+                        #if np.all(abs(dict_VAE[step][name] - params.grad.numpy())) < 1e-7 == False:
+                        #if dict_VAE[name] != tuple(params.grad.numpy()):
+                        if np.array_equal(dict_VAE[name], params.grad.numpy()) == False:
                             print("Change in gradients {}".format(name))
+                            dict_VAE[name] = params.grad.numpy().copy()
                         else:
                             print("No change in gradients {}".format(name))
-                        dict_VAE[name] = params
+                        #print("dict VAE {}".format(dict_VAE[name][0, 0, :, :]))
                         print()
 
                     if name == 'decoder.1.weight':
                         #1024, 128
                         print("After Discriminator optim  decoder linear step {}".format(step))
-                        print("name {}, params grad {}".format(name, params.grad[:5, :2]))
-                        if dict_VAE[name] != params.grad:
+                        #print("name {}, params grad {}".format(name, params.grad[:5, :2]))
+                        if np.array_equal(dict_VAE[name], params.grad.numpy()) == False:
+                        #if dict_VAE[name] != tuple(params.grad.numpy()):
                             print("Change in gradients {}".format(name))
+                            dict_VAE[name] = params.grad.numpy().copy()
                         else:
                             print("No change in gradients {}".format(name))
-                        dict_VAE[name] = params
                         print()
 
                     if name == 'decoder.7.weight':
                         print("After Discriminator optim  decoder step {}".format(step))
-                        print("name {}, params grad {}".format(name, params.grad[1, 1, :, :]))
-                        if dict_VAE[name] != params.grad:
+                        #print("name {}, params grad {}".format(name, params.grad[1, 1, :, :]))
+                        if np.array_equal(dict_VAE[name], params.grad.numpy()) == False:
+                        #if dict_VAE[name] != tuple(params.grad.numpy()):
                             print("Change in gradients {}".format(name))
+                            dict_VAE[name] = params.grad.numpy().copy()
                         else:
                             print("No change in gradients {}".format(name))
-                        dict_VAE[name] = params
                         print()
 
                 for name, params in self.D.named_parameters():
 
                     if name == 'net.4.weight':
-                        print("Before VAE optim  decoder step {}".format(step))
-                        print("name {}, params grad {}".format(name, params.grad[:5, :5]))
-                        if dict_disc[name] != params.grad:
+                        print("After Discriminator optim  decoder step {}".format(step))
+                        #print("name {}, params grad {}".format(name, params.grad[:5, :5]))
+
+                        if np.array_equal(dict_VAE[name], params.grad.numpy()) == False:
+                        #if dict_VAE[name] != tuple(params.grad.numpy()):
                             print("Change in gradients {}".format(name))
+                            dict_VAE[name] = params.grad.numpy().copy()
                         else:
                             print("No change in gradients {}".format(name))
-                        dict_disc[name] = params
                         print()
 
                 # Logging
