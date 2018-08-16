@@ -43,7 +43,7 @@ def parse():
     parser.add_argument('--no-cuda', action='store_true', default=False)
     parser.add_argument('--nb-test', type=int, default=9, help='number of test samples to visualize the recons of')
     parser.add_argument('--seed', type=int, default=1)
-    parser.add_argument('--log-interval', type=int, default=50)
+    parser.add_argument('--log-interval', type=int, default=5)
     parser.add_argument('--save-interval', type=int, default=50)
 
     return parser.parse_args()
