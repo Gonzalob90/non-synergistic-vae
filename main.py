@@ -49,6 +49,7 @@ class Trainer():
                                   betas=(self.beta1_D, self.beta2_D))
 
         self.alpha = args.alpha
+        self.omega = args.omega
 
         self.nets = [self.VAE, self.D]
 
@@ -390,7 +391,7 @@ class Trainer():
 
 
                 # Step 1: compute the argmax of D kl (q(ai | x(i)) || )
-                best_ai = greedy_policy_Smax_discount(self.z_dim, mu,logvar,alpha=0.8)
+                best_ai = greedy_policy_Smax_discount(self.z_dim, mu,logvar,alpha=self.omega)
 
 
                 # Step 2: compute the Imax

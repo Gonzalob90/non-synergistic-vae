@@ -28,6 +28,7 @@ def parse():
     parser.add_argument('--z_dim', default=10, type=int, help='dimension of the gaussian latents')
     parser.add_argument('--gamma', default=6.4, type=float, help='coefficient of density-ratio term')
     parser.add_argument('--alpha', default=1.5, type=float, help='coefficient of synergy term')
+    parser.add_argument('--omega', default=0.8, type=float, help='coefficient of the greedy policy')
 
     parser.add_argument('--lr_VAE', default=1e-4, type=float, help='learning rate for VAE')
     parser.add_argument('--beta1_VAE', default=0.9, type=float, help='beta1 parameter of Adam for VAE')
