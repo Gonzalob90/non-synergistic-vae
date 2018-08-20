@@ -1,5 +1,6 @@
 
 import torch.nn as nn
+import torch as torch
 
 class Flatten(nn.Module):
     def forward(self, input):
@@ -17,7 +18,9 @@ class Reshape(nn.Module):
 class Discriminator(nn.Module):
     def __init__(self, num_latents):
         super(Discriminator, self).__init__()
+
         self.num_latents = num_latents
+
         self.net = nn.Sequential(
             nn.Linear(num_latents, 1000),
             nn.LeakyReLU(),
@@ -33,6 +36,31 @@ class Discriminator(nn.Module):
             )
     def forward(self, z):
         return self.net(z).squeeze()
+
+
+class Discriminator_syn(nn.Module):
+    def __init__(self, num_latents):
+        super(Discriminator_syn, self).__init__()
+
+        self.num_latents = num_latents
+
+        self.net = nn.Sequential(
+            nn.Linear(num_latents * 2, 1000),
+            nn.LeakyReLU(),
+            nn.Linear(1000, 1000),
+            nn.LeakyReLU(),
+            nn.Linear(1000, 1000),
+            nn.LeakyReLU(),
+            nn.Linear(1000, 1000),
+            nn.LeakyReLU(),
+            nn.Linear(1000, 1000),
+            nn.LeakyReLU(),
+            nn.Linear(1000, num_latents)
+            )
+
+    def forward(self, mu, logvar):
+        syn = torch.cat((mu, logvar), 1)
+        return self.net(syn).squeeze()
 
 
 class VAE(nn.Module):
@@ -67,7 +95,6 @@ class VAE(nn.Module):
             nn.ReLU(),
             nn.ConvTranspose2d(32, 1, 4, 2, 1)
         )
-
 
     def reparametrise(selfs, mu, logvar):
 

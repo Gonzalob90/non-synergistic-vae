@@ -48,7 +48,7 @@ class Trainer():
         self.optim_D = optim.Adam(self.D.parameters(), lr=self.lr_D,
                                   betas=(self.beta1_D, self.beta2_D))
 
-        self.alpha = 0.8
+        self.alpha = args.alpha
 
         self.nets = [self.VAE, self.D]
 
@@ -73,12 +73,12 @@ class Trainer():
         dict_VAE = defaultdict(list)
         dict_weight = {a: [] for a in weights_names}
 
-        #for e in range(epochs):
-        for e in range(1):
+        for e in range(epochs):
+        #for e in range():
 
             for x_true1, x_true2 in self.dataloader:
 
-                if step == 200: break
+                #if step == 1: break
 
                 step += 1
 
@@ -190,11 +190,6 @@ class Trainer():
                 #print("x_true1 size {}".format(x_true1.size()))
 
                 x_recon, mu, logvar, z = self.VAE(x_true1)
-
-                #print("x_recon size {}".format(x_recon.size()))
-                #print("mu size {}".format(mu.size()))
-                #print("logvar size {}".format(logvar.size()))
-                #print("z size {}".format(z.size()))
 
                 # Reconstruction and KL
                 vae_recon_loss = recon_loss(x_true1, x_recon)
@@ -396,7 +391,6 @@ class Trainer():
 
                 # Step 1: compute the argmax of D kl (q(ai | x(i)) || )
                 best_ai = greedy_policy_Smax_discount(self.z_dim, mu,logvar,alpha=0.8)
-
 
 
                 # Step 2: compute the Imax
@@ -888,7 +882,6 @@ class Trainer():
                     print("Recons. Loss = " + "{:.4f}".format(vae_recon_loss))
                     print("KL Loss = " + "{:.4f}".format(vae_kl))
                     print("TC Loss = " + "{:.4f}".format(tc_loss))
-                    print("Syn Loss = " + "{:.4f}".format(syn_loss))
                     print("Factor VAE Loss = " + "{:.4f}".format(vae_loss))
                     print("D loss = " + "{:.4f}".format(d_loss))
                     print("best_ai {}".format(best_ai))
@@ -898,7 +891,7 @@ class Trainer():
 
                 # Saving
                 if not step % self.args.save_interval:
-                    filename = 'traversal_' + str(step) + '.png'
+                    filename = 'alpha_' + str(self.alpha) + '_traversal_' + str(step) + '.png'
                     filepath = os.path.join(self.args.output_dir, filename)
                     traverse(self.net_mode, self.VAE, self.test_imgs, filepath)
 
