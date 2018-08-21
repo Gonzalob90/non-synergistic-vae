@@ -192,6 +192,7 @@ class Trainer():
 
                 x_recon, mu, logvar, z = self.VAE(x_true1)
 
+
                 # Reconstruction and KL
                 vae_recon_loss = recon_loss(x_true1, x_recon)
                 #print("vae recon loss {}".format(vae_recon_loss))

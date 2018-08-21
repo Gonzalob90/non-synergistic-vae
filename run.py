@@ -4,7 +4,7 @@ import shutil
 
 import torch
 import numpy as np
-from main import Trainer
+from main_syn_1A import Trainer
 from dataset import get_dsprites_dataloader
 
 DATASETS = {'dsprites': [(1, 64, 64), get_dsprites_dataloader]}
