@@ -12,6 +12,7 @@ from model import VAE, Discriminator
 
 from test import greedy_policy_Smax_discount, I_max_batch
 
+
 torch.set_printoptions(precision=6)
 
 class Trainer():
@@ -79,7 +80,7 @@ class Trainer():
 
             for x_true1, x_true2 in self.dataloader:
 
-                #if step == 1: break
+                if step == 11: break
 
                 step += 1
 

@@ -26,7 +26,7 @@ def kl_div_mean(mu, logvar):
 
 def kl_div_mean_syn_1A(mu, logvar):
     kld = -0.5 * (1 + logvar - mu ** 2 - logvar.exp()).sum(1)
-    print(kld.size())
+    #print(kld.size())
     return kld
 
 def permute_dims(z):

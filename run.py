@@ -4,7 +4,7 @@ import shutil
 
 import torch
 import numpy as np
-from main_syn_1A import Trainer
+from main_only_syn_1B import Trainer
 from dataset import get_dsprites_dataloader
 
 DATASETS = {'dsprites': [(1, 64, 64), get_dsprites_dataloader]}
@@ -52,6 +52,7 @@ def parse():
     parser.add_argument('--seed', type=int, default=1)
     parser.add_argument('--log-interval', type=int, default=500)
     parser.add_argument('--save-interval', type=int, default=2000)
+    parser.add_argument('--seq-interval', type=int, default=2000)
 
     return parser.parse_args()
 
