@@ -1,5 +1,5 @@
 import numpy as np
-from collections import defaultdict
+from collections import OrderedDict, Counter
 
 import torch
 import torch.nn.functional as F
@@ -10,12 +10,12 @@ from ops import recon_loss, kl_div, permute_dims, kl_div_uni_dim
 from utils import traverse
 from model import VAE
 
-from test import greedy_policy_Smax_discount, I_max_batch
+from test import greedy_policy_Smax_discount, I_max_batch, e_greedy_policy_Smax_discount
 
 
 torch.set_printoptions(precision=6)
 
-class Trainer():
+class Trainer1B():
 
     def __init__(self, args, dataloader, device, test_imgs):
 
@@ -41,8 +41,11 @@ class Trainer():
         self.optim_VAE = optim.Adam(self.VAE.parameters(), lr=self.lr_VAE,
                                     betas=(self.beta1_VAE, self.beta2_VAE))
 
+        #self.optim_VAE = optim.SGD(self.VAE.parameters(), lr=1.0)
+
         self.alpha = args.alpha
         self.omega = args.omega
+        self.epsilon = args.epsilon
 
         self.nets = [self.VAE]
 
@@ -50,28 +53,21 @@ class Trainer():
 
         self.net_mode(train=True)
 
-        ones = torch.ones(self.batch_size, dtype=torch.long, device=self.device)
-        zeros = torch.zeros(self.batch_size, dtype=torch.long, device=self.device)
-
         epochs = int(np.ceil(self.steps)/len(self.dataloader))
         print("number of epochs {}".format(epochs))
 
         step = 0
-
-
-        weights_names = ['encoder.2.weight', 'encoder.10.weight', 'decoder.0.weight', 'decoder.7.weight', 'net.4.weight']
-
-        dict_VAE = defaultdict(list)
-        dict_weight = {a: [] for a in weights_names}
+        c = Counter()
 
         for e in range(epochs):
         #for e in range():
 
             for x_true1, x_true2 in self.dataloader:
 
-                #if step == 10: break
+                #if step == 30: break
 
                 step += 1
+
 
                 # VAE
                 x_true1 = x_true1.unsqueeze(1).to(self.device)
@@ -94,7 +90,15 @@ class Trainer():
                 #Synergy Max
 
                 # Step 1: compute the argmax of D kl (q(ai | x(i)) || )
-                best_ai = greedy_policy_Smax_discount(self.z_dim, mu,logvar,alpha=self.omega)
+                if self.args.policy == "greedy":
+                    best_ai = greedy_policy_Smax_discount(self.z_dim, mu, logvar,alpha=self.omega)
+                    print("step {}, latents {}".format(step, best_ai))
+                    c.update(best_ai)
+
+                if self.args.policy == "e-greedy":
+                    best_ai = e_greedy_policy_Smax_discount(self.z_dim, mu, logvar, alpha=self.omega, epsilon=self.epsilon)
+                    print("step {}, latents {}".format(step, best_ai))
+                    c.update(best_ai)
 
                 # Step 2: compute the Imax
                 mu_syn = mu[:, best_ai]
@@ -104,19 +108,52 @@ class Trainer():
                     I_max = kl_div_uni_dim(mu_syn, logvar_syn).mean()
                     # print("here")
                 else:
-                    I_max = kl_div(mu_syn, logvar_syn)
 
+                    I_max = kl_div(mu_syn, logvar_syn)
+                    #print("I max {}".format(I_max))
+                    #I_max_dim = kl_div_uni_dim(mu_syn, logvar_syn).sum(1).mean()
+                    #print("I max dim {}".format(I_max_dim))
 
                 # Step 3: Use it in the loss
                 syn_loss = self.alpha * I_max
 
+                #print()
+                #print("WEIGHTS BEFORE")
+                #print("WEIGHTS BEFORE UPDATE STEP {}".format(step))
+                #print("encoder.2.weight {}".format(self.optim_VAE.param_groups[0]['params'][2][0, 0, :, :]))
+                #print("encoder.10.weight first 5 samples {}".format(self.optim_VAE.param_groups[0]['params'][10][:10, :10]))
+
+
                 # Step 4: Optimise Syn term
                 self.optim_VAE.zero_grad() # set zeros all the gradients of VAE network
                 syn_loss.backward() #backprop the gradients
+
+                """
+                print("GRADS")
+                for name, params in self.VAE.named_parameters():
+
+                    if name == 'encoder.10.weight':
+                        # size : 32,32,4,4
+
+                        print()
+                        print("params grad {}".format(params.grad[1, :10]))
+                        print()
+                        print("name {}, params grad {}".format(name, params.grad[:10, :10]))
+                """
+
                 self.optim_VAE.step() #Does the update in VAE network parameters
+
+                #print()
+                #print("WEIGHTS AFTER UPDATE STEP {}".format(step))
+                #print("encoder.2.weight {}".format(self.optim_VAE.param_groups[0]['params'][2][0, 0, :, :]))
+                #print("encoder.10.weight first 5 samples {}".format(self.optim_VAE.param_groups[0]['params'][10][:10, :10]))
+
 
                 # Logging
                 if step % self.args.log_interval == 0:
+
+                    O = OrderedDict(
+                        [(i, str(round(count / sum(c.values()) * 100.0, 3)) + '%') for i, count in c.most_common()])
 
                     print("Step {}".format(step))
                     print("Recons. Loss = " + "{:.4f}".format(vae_recon_loss))
@@ -125,6 +162,8 @@ class Trainer():
                     print("best_ai {}".format(best_ai))
                     print("I_max {}".format(I_max))
                     print("Syn loss {:.4f}".format(syn_loss))
+                    for k, v in O.items():
+                        print("latent {}: {}".format(k, v))
 
                 # Saving
                 if not step % self.args.save_interval:

@@ -141,6 +141,68 @@ def greedy_policy_Smax_discount(z_dim, mu, logvar, alpha):
     return best_index
 
 
+def e_greedy_policy_Smax_discount(z_dim, mu, logvar, alpha, epsilon):
+
+    best_c = []
+    best_index = []
+    Imax_best = 0
+
+    for i in range(z_dim):
+        #print("z dim {}".format(i))
+        index = generate_candidate(z_dim, best_c)
+        #print("this is index {}".format(index))
+
+        p = np.random.uniform(0,1)
+        #print("value of p {}, dim {}".format(p, i))
+
+        if p <= epsilon:
+            #print("e-greedy, dim {}".format(i))
+            indices = list(set(list(range(0,z_dim))) - set(best_c))
+            best_c = [random.choice(indices)] + best_c
+            Imax_best = I_max_batch(best_c, mu, logvar)
+            #print("c, egreedy {}".format(best_c))
+            #print("Imax_best, egreedy {}".format(Imax_best))
+            #print()
+            best_index = best_c
+
+        else:
+
+            for id in index:
+                #print("id: {}".format(id))
+                c = best_index + [id]
+                #print("best index {}".format(best_index))
+                #print("c: {}".format(c))
+
+                Imax_new = I_max_batch(c, mu, logvar)
+                #print("Imax_new {}".format(Imax_new))
+                #print("Imax_old (best) {}".format(Imax_best))
+                #print()
+
+
+                if len(best_index) < 1:
+
+                    if Imax_new > Imax_best:
+                        #print("Update one dim, best_c {}, c{}, I_max_new {}, Imax_best {}".format(best_c,c,Imax_new,Imax_best))
+
+                        best_c = c
+                        Imax_best = Imax_new
+                else:
+                    #print("Imax_new = {}".format(Imax_new))
+                    #print("Imax_new disc = {}".format(Imax_new * alpha))
+                    #print("Imax_best = {}".format(Imax_best))
+                    if Imax_new * alpha > Imax_best:
+                        #print("Update more than one dim")
+                        #print("Update one dim, best_c {},c{}, I_max_new {}, Imax_best {}".format(best_c, c, Imax_new, Imax_best))
+
+                        best_c = c
+                        Imax_best = Imax_new
+
+            best_index = best_c
+
+        #print(best_index)
+
+    return best_index
+
 # Instead of summing compute the mean of the KL along the dim
 # I want to use an RL approach using a simple multi bandit problem.
 def greedy_policy_Igs(z_dim, mu, logvar):
@@ -190,6 +252,8 @@ def greedy_policy_one_dim(z_dim, mu, logvar):
     best_c = []
     Imax_best = 0
 
+
+
     for i in range(z_dim):
         #print("z dim {}".format(i))
         c = [i]
@@ -207,6 +271,38 @@ def greedy_policy_one_dim(z_dim, mu, logvar):
 
     #print("final best_c {}".format(best_c))
 
+    return best_c
+
+# Compute KL element wise
+def e_greedy_policy_one_dim(z_dim, mu, logvar, epsilon):
+    best_c = []
+    Imax_best = 0
+
+    p = np.random.uniform(0, 1)
+    print("value of p {}".format(p))
+
+    if p <= epsilon:
+        print("e-greedy")
+        best_c = [random.choice(range(0,10))]
+
+    else:
+        for i in range(z_dim):
+            #print("z dim {}".format(i))
+            c = [i]
+            #print("c: {}".format(c))
+
+            Imax_new = I_max_batch(c, mu, logvar)
+            #print("Imax_new {}".format(Imax_new))
+            #print("Imax_old {}".format(Imax_best))
+
+            if Imax_new > Imax_best:
+                #print("update")
+                best_c = c
+                Imax_best = Imax_new
+                #print(best_c)
+
+        #print("final best_c {}".format(best_c))
+    print(best_c)
     return best_c
 
 
@@ -541,3 +637,8 @@ mu1 = torch.tensor([[-0.3549,  4.0147, -0.8859, -0.5778, -0.3731, -1.2710, -3.28
 #    print(a, i)
 
 #metric_1A(mu1, logvar1, 10, 64)
+
+#e_greedy_policy_one_dim(10, mu1, logvar1, 0.5)
+
+
+

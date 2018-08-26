@@ -4,7 +4,9 @@ import shutil
 
 import torch
 import numpy as np
-from main_only_syn_1B import Trainer
+from main_only_syn_1B import Trainer1B
+from main_syn_1A import Trainer1A
+
 from dataset import get_dsprites_dataloader
 
 DATASETS = {'dsprites': [(1, 64, 64), get_dsprites_dataloader]}
@@ -29,6 +31,10 @@ def parse():
     parser.add_argument('--gamma', default=6.4, type=float, help='coefficient of density-ratio term')
     parser.add_argument('--alpha', default=1.5, type=float, help='coefficient of synergy term')
     parser.add_argument('--omega', default=0.8, type=float, help='coefficient of the greedy policy')
+
+    parser.add_argument('--metric', default='1B', type=str, help="Synergy metrics")
+    parser.add_argument('--policy', default='greedy', type=str, help="policy to use for the Synergy metric")
+    parser.add_argument('--epsilon', default=0.05, type=float, help='exploration trade-off for e-greedy policy')
 
     parser.add_argument('--lr_VAE', default=1e-4, type=float, help='learning rate for VAE')
     parser.add_argument('--beta1_VAE', default=0.9, type=float, help='beta1 parameter of Adam for VAE')
@@ -83,9 +89,15 @@ def main():
     os.makedirs(args.output_dir)
 
     # train
-    net = Trainer(args, dataloader, device, test_imgs)
-    net.train()
+    if args.metric == "1A":
 
+        net = Trainer1A(args, dataloader, device, test_imgs)
+        net.train()
+
+    if args.metric == "1B":
+
+        net = Trainer1B(args, dataloader, device, test_imgs)
+        net.train()
 
 if __name__ == "__main__":
     main()
