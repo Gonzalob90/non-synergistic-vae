@@ -44,7 +44,7 @@ class Trainer1A():
 
         #self.optim_VAE = optim.SGD(self.VAE.parameters(), lr=1.0)
 
-        self.alpha = args.alphafd
+        self.alpha = args.alpha
         self.omega = args.omega
         self.epsilon = args.epsilon
 
