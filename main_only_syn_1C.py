@@ -67,7 +67,7 @@ class Trainer1C():
 
             for x_true1, x_true2 in self.dataloader:
 
-                if step == 2: break
+                #if step == 2: break
 
                 step += 1
 
