@@ -10,12 +10,12 @@ from ops import recon_loss, kl_div, kl_div_uni_dim, kl_div_mean_syn_1A
 from utils import traverse
 from model import VAE, Discriminator
 
-from test import greedy_policy_Smax_discount, I_max_batch, e_greedy_policy_Smax_discount
+from test import I_max_batch, e_greedy_policy_one_dim, greedy_policy_one_dim
 from plots_matrices import plot_matrices_1
 
 torch.set_printoptions(precision=6)
 
-class Trainer1A():
+class Trainer1C():
 
     def __init__(self, args, dataloader, device, test_imgs):
 
@@ -44,7 +44,7 @@ class Trainer1A():
 
         #self.optim_VAE = optim.SGD(self.VAE.parameters(), lr=1.0)
 
-        self.alpha = args.alphafd
+        self.alpha = args.alpha
         self.omega = args.omega
         self.epsilon = args.epsilon
 
@@ -67,7 +67,7 @@ class Trainer1A():
 
             for x_true1, x_true2 in self.dataloader:
 
-                #if step == 1: break
+                if step == 2: break
 
                 step += 1
 
@@ -110,13 +110,11 @@ class Trainer1A():
 
                     # Step 1: compute the argmax of D kl (q(ai | x(i)) || )
                     if self.args.policy == "greedy":
-                        index = greedy_policy_Smax_discount(self.z_dim, mu_s.view([1,-1]), logvar_s.view([1,-1]), alpha=self.omega)
+                        index = greedy_policy_one_dim(self.z_dim, mu_s.view([1,-1]), logvar_s.view([1,-1]))
                         #print("step {}, sample {}, latents {}".format(step, s, index))
 
-
                     if self.args.policy == "e-greedy":
-                        index = e_greedy_policy_Smax_discount(self.z_dim, mu_s.view([1,-1]), logvar_s.view([1,-1]), alpha=self.omega,
-                                                                epsilon=self.epsilon)
+                        index = e_greedy_policy_one_dim(self.z_dim, mu_s.view([1,-1]), logvar_s.view([1,-1]), epsilon=self.epsilon)
                         #print("step {}, sample {}, latents {}".format(step, s, index))
 
                     # get the argmax of D kl (q(ai | x(i)) || )
@@ -145,20 +143,16 @@ class Trainer1A():
                     mu_syn = mu_syn.view([1,-1])
                     logvar_syn = logvar_syn.view([1, -1])
 
-                    if len(mu_syn.size()) == 1:
-                        I_max = kl_div_mean_syn_1A(mu_syn, logvar_syn)
-                        #print("here")
-                    else:
-                        I_max = kl_div_mean_syn_1A(mu_syn, logvar_syn)
-                        #print("I_max {}".format(I_max))
-
-                        #I_max_dim = kl_div_uni_dim(mu_syn, logvar_syn)
-                        #print("I max dim {}".format(I_max_dim))
+                    I_max = kl_div_mean_syn_1A(mu_syn, logvar_syn)
+                    #print("I_max {}".format(I_max))
+                    #I_max_dim = kl_div_uni_dim(mu_syn, logvar_syn)
+                    #print("I max dim {}".format(I_max_dim))
 
                     #print(I_max)
                     #print(I_max.size())
                     S_max.append(I_max)
                     #print("SAMPLE {}".format(s))
+
 
                 # Saving sequence of synergy latents
                 if step % self.args.seq_interval == 0:
@@ -208,8 +202,8 @@ class Trainer1A():
                         print("params grad {}".format(params.grad[1, :10]))
                         print()
                         print("name {}, params grad {}".format(name, params.grad[:10, :10]))
-                """
 
+                """
                 self.optim_VAE.step()  # Does the update in VAE network parameters
 
                 #print()

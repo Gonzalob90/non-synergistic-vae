@@ -4,8 +4,10 @@ import shutil
 
 import torch
 import numpy as np
-from main_only_syn_1B import Trainer1B
+
 from main_syn_1A import Trainer1A
+from main_only_syn_1B import Trainer1B
+from main_only_syn_1C import Trainer1C
 
 from dataset import get_dsprites_dataloader
 
@@ -98,6 +100,12 @@ def main():
 
         net = Trainer1B(args, dataloader, device, test_imgs)
         net.train()
+
+    if args.metric == "1C":
+
+        net = Trainer1C(args, dataloader, device, test_imgs)
+        net.train()
+
 
 if __name__ == "__main__":
     main()

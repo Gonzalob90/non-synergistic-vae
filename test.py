@@ -279,10 +279,10 @@ def e_greedy_policy_one_dim(z_dim, mu, logvar, epsilon):
     Imax_best = 0
 
     p = np.random.uniform(0, 1)
-    print("value of p {}".format(p))
+    #print("value of p {}".format(p))
 
     if p <= epsilon:
-        print("e-greedy")
+        #print("e-greedy")
         best_c = [random.choice(range(0,10))]
 
     else:
@@ -302,7 +302,7 @@ def e_greedy_policy_one_dim(z_dim, mu, logvar, epsilon):
                 #print(best_c)
 
         #print("final best_c {}".format(best_c))
-    print(best_c)
+    #print(best_c)
     return best_c
 
 
