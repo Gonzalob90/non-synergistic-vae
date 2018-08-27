@@ -9,6 +9,7 @@ from main_syn_1A import Trainer1A
 from main_only_syn_1B import Trainer1B
 from main_only_syn_1C import Trainer1C
 from main_only_syn_1D import Trainer1D
+from test_sample_main_syn_1A import Test
 
 from dataset import get_dsprites_dataloader
 
@@ -38,6 +39,7 @@ def parse():
     parser.add_argument('--metric', default='1B', type=str, help="Synergy metrics")
     parser.add_argument('--policy', default='greedy', type=str, help="policy to use for the Synergy metric")
     parser.add_argument('--epsilon', default=0.05, type=float, help='exploration trade-off for e-greedy policy')
+    parser.add_argument('--sample', default='no_sample', type=str, help="sample new values of logvar and mu for the Syn term")
 
     parser.add_argument('--lr_VAE', default=1e-4, type=float, help='learning rate for VAE')
     parser.add_argument('--beta1_VAE', default=0.9, type=float, help='beta1 parameter of Adam for VAE')
@@ -112,6 +114,10 @@ def main():
         net = Trainer1D(args, dataloader, device, test_imgs)
         net.train()
 
+    if args.metric == "test":
+
+        net = Test(args, dataloader, device, test_imgs)
+        net.train()
 
 
 if __name__ == "__main__":

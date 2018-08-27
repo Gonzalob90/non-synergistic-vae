@@ -102,11 +102,23 @@ class Trainer1A():
                     #print(step % self.args.seq_interval)
                     syn_flag = True
 
+                if self.args.sample == "sample":
+                    # Discriminator
+                    x_true2 = x_true2.unsqueeze(1).to(self.device)
+                    parameters = self.VAE(x_true2, decode=False)
+                    mu_prime = parameters[1]
+                    logvar_prime = parameters[2]
+
+                elif self.args.sample == "no_sample":
+                    mu_prime = mu
+                    logvar_prime = logvar
+
+
                 for s in range(self.batch_size):
 
                     # slice one sample
-                    mu_s = mu[s, :]
-                    logvar_s = logvar[s, :]
+                    mu_s = mu_prime[s, :]
+                    logvar_s = logvar_prime[s, :]
 
                     # Step 1: compute the argmax of D kl (q(ai | x(i)) || )
                     if self.args.policy == "greedy":
@@ -185,7 +197,13 @@ class Trainer1A():
                 #print("WEIGHTS BEFORE")
                 #print("WEIGHTS AFTER UPDATE STEP {}".format(step))
                 #print("encoder.2.weight {}".format(self.optim_VAE.param_groups[0]['params'][2][0, 0, :, :]))
-                #print("encoder.10.weight first 5 samples {}".format(self.optim_VAE.param_groups[0]['params'][10][:10, :10]))
+                #print("mu weights")
+                #print("encoder.10.weight first 10 samples {}".format(
+                #    self.optim_VAE.param_groups[0]['params'][10][:10, :10]))
+                #print()
+                #print("logvar weights")
+                #print("encoder.10.weight first 10 samples {}".format(
+                #    self.optim_VAE.param_groups[0]['params'][10][10:, :10]))
 
 
                 # Step 4: Optimise Syn term
@@ -205,9 +223,13 @@ class Trainer1A():
                         print(Smax[:10])
 
                         print()
-                        print("params grad {}".format(params.grad[1, :10]))
+                        #print("params grad {}".format(params.grad[1, :10]))
                         print()
-                        print("name {}, params grad {}".format(name, params.grad[:10, :10]))
+                        print("mu gradients name {}".format(name))
+                        print(params.grad[:10, :10])
+                        print()
+                        print("logvar gradients name {}".format(name))
+                        print(params.grad[10:, :10])
                 """
 
                 self.optim_VAE.step()  # Does the update in VAE network parameters
@@ -216,6 +238,13 @@ class Trainer1A():
                 #print("WEIGHTS AFTER UPDATE STEP {}".format(step))
                 #print("encoder.2.weight {}".format(self.optim_VAE.param_groups[0]['params'][2][0,0,:,:]))
                 #print("encoder.10.weight first 5 samples {}".format(self.optim_VAE.param_groups[0]['params'][10][:10, :10]))
+                #print("mu weights")
+                #print("encoder.10.weight first 10 samples {}".format(
+                #    self.optim_VAE.param_groups[0]['params'][10][:10, :10]))
+                #print()
+                #print("logvar weights")
+                #print("encoder.10.weight first 10 samples {}".format(
+                #    self.optim_VAE.param_groups[0]['params'][10][10:, :10]))
 
                 ###### END Syn
 
