@@ -189,7 +189,7 @@ class Trainer1A():
                 #print()
 
                 syn_loss = self.alpha * syn_term
-                print("syn_loss step {}".format(syn_loss, step))
+                #print("syn_loss step {}".format(syn_loss, step))
 
 
                 #print()
