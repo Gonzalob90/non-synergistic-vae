@@ -13,6 +13,7 @@ def I_max_ind(index, mu, logvar):
     print(mu_syn)
     logvar_syn = logvar[:, index]
     print(logvar_syn)
+
     I_max = kl_div_syn(mu_syn, logvar_syn)
     print("normal KL {}".format(kl_div_syn(mu, logvar)))
     print("syn KL {}".format(I_max))
@@ -31,7 +32,11 @@ def I_max_batch(index, mu, logvar):
         I_max = kl_div_uni_dim(mu_syn, logvar_syn).mean()
         #print("here")
     else:
+        #print(kl_div_uni_dim(mu_syn, logvar_syn))
+        #print("MEAN")
+        #print(kl_div_uni_dim(mu_syn, logvar_syn).mean())
         I_max = kl_div(mu_syn, logvar_syn)
+        #print("IMAX NORMAL {}".format(I_max))
 
     return I_max
 
@@ -249,10 +254,9 @@ def greedy_policy_Igs(z_dim, mu, logvar):
 
 # Compute KL element wise
 def greedy_policy_one_dim(z_dim, mu, logvar):
+
     best_c = []
     Imax_best = 0
-
-
 
     for i in range(z_dim):
         #print("z dim {}".format(i))
