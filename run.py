@@ -49,10 +49,6 @@ def parse():
     parser.add_argument('--beta1_D', default=0.5, type=float, help='beta1 parameter of Adam for Discriminator')
     parser.add_argument('--beta2_D', default=0.9, type=float, help='beta2 parameter of Adam for Discriminator')
 
-    parser.add_argument('--lr_D_syn', default=1e-4, type=float, help='learning rate for Discriminator syn')
-    parser.add_argument('--beta1_D_syn', default=0.5, type=float, help='beta1 parameter of Adam for Discriminator syn')
-    parser.add_argument('--beta2_D_syn', default=0.9, type=float, help='beta2 parameter of Adam for Discriminator syn')
-
     parser.add_argument('--batch_size', default=64, type=int, help='number of batches')
     parser.add_argument('--steps', default=3e5, type=float, help='steps to train')
 
@@ -62,6 +58,7 @@ def parse():
     parser.add_argument('--nb-test', type=int, default=9, help='number of test samples to visualize the recons of')
     parser.add_argument('--seed', type=int, default=1)
     parser.add_argument('--log-interval', type=int, default=500)
+    parser.add_argument('--plot-interval', type=int, default=500)
     parser.add_argument('--save-interval', type=int, default=2000)
     parser.add_argument('--seq-interval', type=int, default=2000)
 

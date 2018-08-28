@@ -42,7 +42,6 @@ class Trainer1A():
         self.optim_VAE = optim.Adam(self.VAE.parameters(), lr=self.lr_VAE,
                                     betas=(self.beta1_VAE, self.beta2_VAE))
 
-        #self.optim_VAE = optim.SGD(self.VAE.parameters(), lr=1.0)
 
         self.alpha = args.alpha
         self.omega = args.omega
@@ -67,7 +66,7 @@ class Trainer1A():
 
             for x_true1, x_true2 in self.dataloader:
 
-                #if step == 1: break
+                #if step == 100: break
 
                 step += 1
 
@@ -190,7 +189,7 @@ class Trainer1A():
                 #print()
 
                 syn_loss = self.alpha * syn_term
-                #print("syn_loss step {}".format(syn_loss, step))
+                print("syn_loss step {}".format(syn_loss, step))
 
 
                 #print()
