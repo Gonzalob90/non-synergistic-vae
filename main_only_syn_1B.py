@@ -76,12 +76,6 @@ class Trainer1B():
 
                 # Reconstruction and KL
 
-                print("x true size")
-                print(x_true1.size())
-                print("x recon")
-                print(x_recon.size())
-                print(fdfd)
-
                 vae_recon_loss = recon_loss(x_true1, x_recon)
                 vae_kl = kl_div(mu, logvar)
 
