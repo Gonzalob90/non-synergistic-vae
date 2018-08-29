@@ -9,6 +9,7 @@ from main_syn_1A import Trainer1A
 from main_only_syn_1B import Trainer1B
 from main_only_syn_1C import Trainer1C
 from main_only_syn_1D import Trainer1D
+from main_only_syn_1B_MLP import Trainer1B_MLP
 
 from dataset import get_dsprites_dataloader
 
@@ -108,6 +109,11 @@ def main():
     if args.metric == "1D":
 
         net = Trainer1D(args, dataloader, device, test_imgs)
+        net.train()
+
+    if args.metric == "1B_MLP":
+
+        net = Trainer1B_MLP(args, dataloader, device, test_imgs)
         net.train()
 
 if __name__ == "__main__":

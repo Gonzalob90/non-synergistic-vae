@@ -64,7 +64,7 @@ class Trainer1B():
 
             for x_true1, x_true2 in self.dataloader:
 
-                #if step == 1: break
+                if step == 1: break
 
                 step += 1
 
@@ -75,6 +75,13 @@ class Trainer1B():
                 x_recon, mu, logvar, z = self.VAE(x_true1)
 
                 # Reconstruction and KL
+
+                print("x true size")
+                print(x_true1.size())
+                print("x recon")
+                print(x_recon.size())
+                print(fdfd)
+
                 vae_recon_loss = recon_loss(x_true1, x_recon)
                 vae_kl = kl_div(mu, logvar)
 
