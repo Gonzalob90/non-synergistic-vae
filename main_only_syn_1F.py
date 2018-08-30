@@ -212,7 +212,7 @@ class Trainer1F():
                     print("Syn loss {:.4f}".format(syn_loss))
                     print()
                     for k, v in O.items():
-                        print(" best latent {}: {}".format(k, v))
+                        print("best latent {}: {}".format(k, v))
                     print()
                     for k, v in P.items():
                         print("worst latent {}: {}".format(k, v))
