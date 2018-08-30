@@ -1,5 +1,5 @@
 import numpy as np
-from collections import defaultdict
+from collections import OrderedDict, Counter
 
 import torch
 import torch.nn.functional as F
@@ -58,6 +58,7 @@ class Trainer1A():
         print("number of epochs {}".format(epochs))
 
         step = 0
+        c = Counter()
 
         matrix_list = []
 
@@ -66,7 +67,7 @@ class Trainer1A():
 
             for x_true1, x_true2 in self.dataloader:
 
-                #if step == 100: break
+                #if step == 4: break
 
                 step += 1
 
@@ -123,12 +124,14 @@ class Trainer1A():
                     if self.args.policy == "greedy":
                         index = greedy_policy_Smax_discount(self.z_dim, mu_s.view([1,-1]), logvar_s.view([1,-1]), alpha=self.omega)
                         #print("step {}, sample {}, latents {}".format(step, s, index))
+                        c.update(index)
 
 
                     if self.args.policy == "e-greedy":
                         index = e_greedy_policy_Smax_discount(self.z_dim, mu_s.view([1,-1]), logvar_s.view([1,-1]), alpha=self.omega,
                                                                 epsilon=self.epsilon)
                         #print("step {}, sample {}, latents {}".format(step, s, index))
+                        c.update(index)
 
                     # get the argmax of D kl (q(ai | x(i)) || )
                     #index = greedy_policy_Smax_discount(self.z_dim, mu_s.view([1,-1]), logvar_s.view([1,-1]), alpha=self.omega)
@@ -251,12 +254,18 @@ class Trainer1A():
                 # Logging
                 if step % self.args.log_interval == 0:
 
+                    O = OrderedDict(
+                        [(i, str(round(count / sum(c.values()) * 100.0, 3)) + '%') for i, count in c.most_common()])
+
                     print("Step {}".format(step))
                     print("Recons. Loss = " + "{:.4f}".format(vae_recon_loss))
                     print("KL Loss = " + "{:.4f}".format(vae_kl))
                     print("Factor VAE Loss = " + "{:.4f}".format(vae_loss))
                     print("Syn term {}".format(syn_term))
                     print("Syn loss {:.4f}".format(syn_loss))
+
+                    for k, v in O.items():
+                        print("latent {}: {}".format(k, v))
 
 
                 # Saving traverse images
