@@ -38,10 +38,10 @@ class Trainer1F_MLP():
         self.beta2_VAE = args.beta2_VAE
 
         self.VAE = VAE_MLP(self.z_dim).to(self.device)
-        #self.optim_VAE = optim.Adam(self.VAE.parameters(), lr=self.lr_VAE,
-        #                            betas=(self.beta1_VAE, self.beta2_VAE))
+        self.optim_VAE = optim.Adam(self.VAE.parameters(), lr=self.lr_VAE,
+                                    betas=(self.beta1_VAE, self.beta2_VAE))
 
-        self.optim_VAE = optim.SGD(self.VAE.parameters(), lr=1.0)
+        #self.optim_VAE = optim.SGD(self.VAE.parameters(), lr=1.0)
 
         self.alpha = args.alpha
         self.omega = args.omega
