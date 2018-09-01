@@ -3,6 +3,24 @@ import torch
 from torch.nn import functional as F
 from torchvision.utils import save_image
 
+
+class DataGather(object):
+    def __init__(self, *args):
+        self.keys = args
+        self.data = self.get_empty_data_dict()
+
+    def get_empty_data_dict(self):
+        return {arg:[] for arg in self.keys}
+
+    def insert(self, **kwargs):
+        for key in kwargs:
+            self.data[key].append(kwargs[key])
+
+    def flush(self):
+        self.data = self.get_empty_data_dict()
+
+
+
 def traverse(train_model, model, test_imgs, save_path):
 
     train_model(train=False)
@@ -59,4 +77,6 @@ def traverse(train_model, model, test_imgs, save_path):
     save_image(canvas, save_path, nrow=num_colums, pad_value=1)
 
     train_model(train=True)
+
+
 
