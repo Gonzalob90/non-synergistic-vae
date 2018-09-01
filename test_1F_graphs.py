@@ -60,7 +60,7 @@ class Trainer1F_test():
 
         if self.viz_on:
             self.viz_port = args.viz_port
-            self.viz = visdom.Visdom(port=self.viz_port)
+            self.viz = visdom.Visdom(port=self.viz_port, use_incoming_socket=False)
             self.viz_il_iter= args.viz_il_iter
             self.viz_la_iter = args.viz_la_iter
 
