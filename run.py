@@ -14,6 +14,7 @@ from main_only_syn_1E import Trainer1E
 from main_only_syn_1E_MLP import Trainer1E_MLP
 from main_only_syn_1F import Trainer1F
 from main_only_syn_1F_MLP import Trainer1F_MLP
+from test_1F_graphs import Trainer1F_test
 
 from dataset import get_dsprites_dataloader
 
@@ -35,16 +36,22 @@ np.random.seed(init_seed)
 def parse():
     parser = argparse.ArgumentParser(description='Factor-VAE')
 
+    # Basic hyperparameters
     parser.add_argument('--z_dim', default=10, type=int, help='dimension of the gaussian latents')
     parser.add_argument('--gamma', default=6.4, type=float, help='coefficient of density-ratio term')
     parser.add_argument('--alpha', default=1.5, type=float, help='coefficient of synergy term')
     parser.add_argument('--omega', default=0.8, type=float, help='coefficient of the greedy policy')
 
+    # Synergy
     parser.add_argument('--metric', default='1B', type=str, help="Synergy metrics")
     parser.add_argument('--policy', default='greedy', type=str, help="policy to use for the Synergy metric")
     parser.add_argument('--epsilon', default=0.05, type=float, help='exploration trade-off for e-greedy policy')
     parser.add_argument('--sample', default='no_sample', type=str, help="sample new values of logvar and mu for the Syn term")
 
+    # Annealing
+    parser.add_argument('--warmup_iter', default=7000, type=int, help='annealing value')
+
+    # Optimizers
     parser.add_argument('--lr_VAE', default=1e-4, type=float, help='learning rate for VAE')
     parser.add_argument('--beta1_VAE', default=0.9, type=float, help='beta1 parameter of Adam for VAE')
     parser.add_argument('--beta2_VAE', default=0.999, type= float, help='beta2 parameter of Adam for VAE')
@@ -65,6 +72,12 @@ def parse():
     parser.add_argument('--plot-interval', type=int, default=500)
     parser.add_argument('--save-interval', type=int, default=2000)
     parser.add_argument('--seq-interval', type=int, default=2000)
+
+    # Visdom
+    parser.add_argument('--viz_on', default=True, help='enable visdom visualization')
+    parser.add_argument('--viz_port', default=8097, type=int, help='visdom port number')
+    parser.add_argument('--viz_il_iter', default=1, type=int, help='visdom line data logging iter')
+    parser.add_argument('--viz_la_iter', default=10, type=int, help='visdom line data applying iter')
 
     return parser.parse_args()
 
@@ -138,6 +151,12 @@ def main():
     if args.metric == "1F_MLP":
 
         net = Trainer1F_MLP(args, dataloader, device, test_imgs)
+        net.train()
+
+
+    if args.metric == "test":
+
+        net = Trainer1F_test(args, dataloader, device, test_imgs)
         net.train()
 
 if __name__ == "__main__":
