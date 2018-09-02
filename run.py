@@ -76,8 +76,8 @@ def parse():
     # Visdom
     parser.add_argument('--viz_on', default=True, help='enable visdom visualization')
     parser.add_argument('--viz_port', default=8097, type=int, help='visdom port number')
-    parser.add_argument('--viz_il_iter', default=1, type=int, help='visdom line data logging iter')
-    parser.add_argument('--viz_la_iter', default=10, type=int, help='visdom line data applying iter')
+    parser.add_argument('--viz_il_iter', default=20, type=int, help='visdom line data logging iter')
+    parser.add_argument('--viz_la_iter', default=100, type=int, help='visdom line data applying iter')
 
     return parser.parse_args()
 

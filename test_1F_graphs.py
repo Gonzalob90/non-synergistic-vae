@@ -55,8 +55,21 @@ class Trainer1F_test():
 
         #Visdom
         self.viz_on = args.viz_port
-        self.win_id = dict(recon="win_recon", kl="win_kl", syn='win_syn')
-        self.line_gather = DataGather('iter', 'recon', 'kl','syn')
+        self.win_id = dict(recon="win_recon", kl="win_kl", syn='win_syn',
+                           l0="win_l0",
+                           l1="win_l1",
+                           l2="win_l2",
+                           l3="win_l3",
+                           l4="win_l4",
+                           l5="win_l5",
+                           l6="win_l6",
+                           l7="win_l7",
+                           l8="win_l8",
+                           l9="win_l9"
+                           )
+        self.line_gather = DataGather('iter', 'recon', 'kl','syn',
+                                      'l0','l1','l2','l3','l4','l5',
+                                      'l6','l7','l8','l9')
 
         if self.viz_on:
             self.viz_port = args.viz_port
@@ -83,7 +96,7 @@ class Trainer1F_test():
 
             for x_true1, x_true2 in self.dataloader:
 
-                #if step == 50: break
+                if step == 100: break
 
                 step += 1
 
@@ -219,6 +232,7 @@ class Trainer1F_test():
                     P = OrderedDict(
                         [(i, str(round(count / sum(d.values()) * 100.0, 3)) + '%') for i, count in d.most_common()])
 
+
                     print("Step {}".format(step))
                     print("Recons. Loss = " + "{:.4f}".format(vae_recon_loss))
                     print("KL Loss = " + "{:.4f}".format(vae_kl))
@@ -244,10 +258,32 @@ class Trainer1F_test():
 
                 # Gather data
                 if self.viz_on and (step % self.viz_il_iter == 0):
+
+                    Q = OrderedDict(
+                        [(i, round(count / sum(c.values()) * 100.0, 3)) for i, count in c.items()])
+
+                    H = dict()
+                    for k in range(10):
+                        if k in Q:
+                            H[k] = Q[k]
+                        else:
+                            H[k] = 0.0
+
                     self.line_gather.insert(iter=step,
                                             recon=vae_recon_loss.item(),
                                             kl=vae_kl.item(),
-                                            syn=syn_loss.item())
+                                            syn=syn_loss.item(),
+                                            l0 = H[0],
+                                            l1 = H[1],
+                                            l2 = H[2],
+                                            l3 = H[3],
+                                            l4 = H[4],
+                                            l5 = H[5],
+                                            l6 = H[6],
+                                            l7 = H[7],
+                                            l8 = H[8],
+                                            l9 = H[9]
+                                            )
 
                 # Visualise data
                 if self.viz_on and (step % self.viz_la_iter == 0):
@@ -256,11 +292,23 @@ class Trainer1F_test():
 
 
     def visualize_line(self):
+
         data = self.line_gather.data
         iters = torch.Tensor(data['iter'])
         recon = torch.Tensor(data['recon'])
         kld = torch.Tensor(data['kl'])
         syn = torch.Tensor(data['syn'])
+
+        count0 = torch.Tensor(data['l0'])
+        count1 = torch.Tensor(data['l1'])
+        count2 = torch.Tensor(data['l2'])
+        count3 = torch.Tensor(data['l3'])
+        count4 = torch.Tensor(data['l4'])
+        count5 = torch.Tensor(data['l5'])
+        count6 = torch.Tensor(data['l6'])
+        count7 = torch.Tensor(data['l7'])
+        count8 = torch.Tensor(data['l8'])
+        count9 = torch.Tensor(data['l9'])
 
         self.viz.line(X=iters,
                       Y=recon,
@@ -286,6 +334,105 @@ class Trainer1F_test():
                           xlabel='iteration',
                           ylabel='Syn loss'))
 
+        # Latent 1
+        self.viz.line(X=iters,
+                      Y=count0,
+                      env='/latents',
+                      win=self.win_id['l0'],
+                      opts=dict(
+                          xlabel='iteration',
+                          ylabel='Specific MI',
+                          title = 'Latent 0'))
+
+        # Latent 1
+        self.viz.line(X=iters,
+                      Y=count1,
+                      env='/latents',
+                      win=self.win_id['l1'],
+                      opts=dict(
+                          xlabel='iteration',
+                          ylabel='Specific MI',
+                          title = 'Latent 1'))
+
+        # Latent 2
+        self.viz.line(X=iters,
+                      Y=count2,
+                      env='/latents',
+                      win=self.win_id['l2'],
+                      opts=dict(
+                          xlabel='iteration',
+                          ylabel='Specific MI',
+                          title = 'Latent 2'))
+
+        # Latent 3
+        self.viz.line(X=iters,
+                      Y=count3,
+                      env='/latents',
+                      win=self.win_id['l3'],
+                      opts=dict(
+                          xlabel='iteration',
+                          ylabel='Specific MI',
+                          title = 'Latent 3'))
+
+        # Latent 4
+        self.viz.line(X=iters,
+                      Y=count4,
+                      env='/latents',
+                      win=self.win_id['l4'],
+                      opts=dict(
+                          xlabel='iteration',
+                          ylabel='Specific MI',
+                          title = 'Latent 4'))
+
+        # Latent 5
+        self.viz.line(X=iters,
+                      Y=count5,
+                      env='/latents',
+                      win=self.win_id['l5'],
+                      opts=dict(
+                          xlabel='iteration',
+                          ylabel='Specific MI',
+                          title = 'Latent 5'))
+
+        # Latent 6
+        self.viz.line(X=iters,
+                      Y=count6,
+                      env='/latents',
+                      win=self.win_id['l6'],
+                      opts=dict(
+                          xlabel='iteration',
+                          ylabel='Specific MI',
+                          title = 'Latent 6'))
+
+        # Latent 7
+        self.viz.line(X=iters,
+                      Y=count7,
+                      env='/latents',
+                      win=self.win_id['l7'],
+                      opts=dict(
+                          xlabel='iteration',
+                          ylabel='Specific MI',
+                          title = 'Latent 7'))
+
+        # Latent 8
+        self.viz.line(X=iters,
+                      Y=count8,
+                      env='/latents',
+                      win=self.win_id['l8'],
+                      opts=dict(
+                          xlabel='iteration',
+                          ylabel='Specific MI',
+                          title = 'Latent 8'))
+
+        # Latent 9
+        self.viz.line(X=iters,
+                      Y=count9,
+                      env='/latents',
+                      win=self.win_id['l9'],
+                      opts=dict(
+                          xlabel='iteration',
+                          ylabel='Specific MI',
+                          title = "Latent 9"))
 
     def viz_init(self):
         zero_init = torch.zeros([1])
@@ -311,8 +458,109 @@ class Trainer1F_test():
                       win=self.win_id['syn'],
                       opts=dict(
                           xlabel='iteration',
-                          ylabel='I max',
+                          ylabel='Syn loss',
                           title='Synergy Loss'))
+
+        # Latent 0
+        self.viz.line(X=zero_init,
+                      Y=zero_init,
+                      env='/latents',
+                      win=self.win_id['l0'],
+                      opts=dict(
+                          xlabel='iteration',
+                          ylabel='Specific MI',
+                          title='Latent 0'))
+
+        # Latent 1
+        self.viz.line(X=zero_init,
+                      Y=zero_init,
+                      env='/latents',
+                      win=self.win_id['l1'],
+                      opts=dict(
+                          xlabel='iteration',
+                          ylabel='Specific MI',
+                          title='Latent 1'))
+
+        # Latent 2
+        self.viz.line(X=zero_init,
+                      Y=zero_init,
+                      env='/latents',
+                      win=self.win_id['l2'],
+                      opts=dict(
+                          xlabel='iteration',
+                          ylabel='Specific MI',
+                          title='Latent 2'))
+
+        # Latent 3
+        self.viz.line(X=zero_init,
+                      Y=zero_init,
+                      env='/latents',
+                      win=self.win_id['l3'],
+                      opts=dict(
+                          xlabel='iteration',
+                          ylabel='Specific MI',
+                          title='Latent 3'))
+
+        # Latent 4
+        self.viz.line(X=zero_init,
+                      Y=zero_init,
+                      env='/latents',
+                      win=self.win_id['l4'],
+                      opts=dict(
+                          xlabel='iteration',
+                          ylabel='Specific MI',
+                          title='Latent 4'))
+
+        # Latent 5
+        self.viz.line(X=zero_init,
+                      Y=zero_init,
+                      env='/latents',
+                      win=self.win_id['l5'],
+                      opts=dict(
+                          xlabel='iteration',
+                          ylabel='Specific MI',
+                          title='Latent 5'))
+
+        # Latent 6
+        self.viz.line(X=zero_init,
+                      Y=zero_init,
+                      env='/latents',
+                      win=self.win_id['l6'],
+                      opts=dict(
+                          xlabel='iteration',
+                          ylabel='Specific MI',
+                          title='Latent 6'))
+
+        # Lines 7
+        self.viz.line(X=zero_init,
+                      Y=zero_init,
+                      env='/latents',
+                      win=self.win_id['l7'],
+                      opts=dict(
+                          xlabel='iteration',
+                          ylabel='Specific MI',
+                          title='Latent 7'))
+
+        # Lines 8
+        self.viz.line(X=zero_init,
+                      Y=zero_init,
+                      env='/latents',
+                      win=self.win_id['l8'],
+                      opts=dict(
+                          xlabel='iteration',
+                          ylabel='Specific MI',
+                          title='Latent 8'))
+
+        # Lines 9
+        self.viz.line(X=zero_init,
+                      Y=zero_init,
+                      env='/latents',
+                      win=self.win_id['l9'],
+                      opts=dict(
+                          xlabel='iteration',
+                          ylabel='Specific MI',
+                          title='Latent 9'))
+
 
 
     def net_mode(self, train):
