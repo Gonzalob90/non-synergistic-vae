@@ -96,7 +96,7 @@ class Trainer1F_test():
 
             for x_true1, x_true2 in self.dataloader:
 
-                if step == 100: break
+                #if step == 100: break
 
                 step += 1
 
