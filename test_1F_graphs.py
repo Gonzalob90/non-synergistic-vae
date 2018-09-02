@@ -298,8 +298,9 @@ class Trainer1F_test():
         recon = torch.Tensor(data['recon'])
         kld = torch.Tensor(data['kl'])
         syn = torch.Tensor(data['syn'])
-
+        #print(syn)
         count0 = torch.Tensor(data['l0'])
+        #print(count0)
         count1 = torch.Tensor(data['l1'])
         count2 = torch.Tensor(data['l2'])
         count3 = torch.Tensor(data['l3'])
@@ -334,11 +335,12 @@ class Trainer1F_test():
                           xlabel='iteration',
                           ylabel='Syn loss'))
 
-        # Latent 1
+        # Latent 0
         self.viz.line(X=iters,
                       Y=count0,
                       env='/latents',
                       win=self.win_id['l0'],
+                      update='append',
                       opts=dict(
                           xlabel='iteration',
                           ylabel='Specific MI',
@@ -349,6 +351,7 @@ class Trainer1F_test():
                       Y=count1,
                       env='/latents',
                       win=self.win_id['l1'],
+                      update='append',
                       opts=dict(
                           xlabel='iteration',
                           ylabel='Specific MI',
@@ -359,6 +362,7 @@ class Trainer1F_test():
                       Y=count2,
                       env='/latents',
                       win=self.win_id['l2'],
+                      update='append',
                       opts=dict(
                           xlabel='iteration',
                           ylabel='Specific MI',
@@ -369,6 +373,7 @@ class Trainer1F_test():
                       Y=count3,
                       env='/latents',
                       win=self.win_id['l3'],
+                      update='append',
                       opts=dict(
                           xlabel='iteration',
                           ylabel='Specific MI',
@@ -379,6 +384,7 @@ class Trainer1F_test():
                       Y=count4,
                       env='/latents',
                       win=self.win_id['l4'],
+                      update='append',
                       opts=dict(
                           xlabel='iteration',
                           ylabel='Specific MI',
@@ -389,6 +395,7 @@ class Trainer1F_test():
                       Y=count5,
                       env='/latents',
                       win=self.win_id['l5'],
+                      update='append',
                       opts=dict(
                           xlabel='iteration',
                           ylabel='Specific MI',
@@ -399,6 +406,7 @@ class Trainer1F_test():
                       Y=count6,
                       env='/latents',
                       win=self.win_id['l6'],
+                      update='append',
                       opts=dict(
                           xlabel='iteration',
                           ylabel='Specific MI',
@@ -409,6 +417,7 @@ class Trainer1F_test():
                       Y=count7,
                       env='/latents',
                       win=self.win_id['l7'],
+                      update='append',
                       opts=dict(
                           xlabel='iteration',
                           ylabel='Specific MI',
@@ -419,6 +428,7 @@ class Trainer1F_test():
                       Y=count8,
                       env='/latents',
                       win=self.win_id['l8'],
+                      update='append',
                       opts=dict(
                           xlabel='iteration',
                           ylabel='Specific MI',
@@ -429,10 +439,12 @@ class Trainer1F_test():
                       Y=count9,
                       env='/latents',
                       win=self.win_id['l9'],
+                      update='append',
                       opts=dict(
                           xlabel='iteration',
                           ylabel='Specific MI',
                           title = "Latent 9"))
+
 
     def viz_init(self):
         zero_init = torch.zeros([1])
@@ -560,7 +572,6 @@ class Trainer1F_test():
                           xlabel='iteration',
                           ylabel='Specific MI',
                           title='Latent 9'))
-
 
 
     def net_mode(self, train):
