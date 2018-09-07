@@ -15,6 +15,7 @@ from main_only_syn_1E_MLP import Trainer1E_MLP
 from main_only_syn_1F import Trainer1F
 from main_only_syn_1F_MLP import Trainer1F_MLP
 from test_1F_graphs import Trainer1F_test
+from main_BVAE_MLP import Trainer_BVAE
 
 from dataset import get_dsprites_dataloader
 
@@ -157,6 +158,11 @@ def main():
     if args.metric == "test":
 
         net = Trainer1F_test(args, dataloader, device, test_imgs)
+        net.train()
+
+    if args.metric == "BVAE":
+
+        net = Trainer_BVAE(args, dataloader, device, test_imgs)
         net.train()
 
 if __name__ == "__main__":
