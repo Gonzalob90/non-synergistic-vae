@@ -343,7 +343,7 @@ class Trainer1F_test():
                       update='append',
                       opts=dict(
                           xlabel='iteration',
-                          ylabel='Specific MI',
+                          ylabel='% Counts',
                           title = 'Latent 0'))
 
         # Latent 1
@@ -354,7 +354,7 @@ class Trainer1F_test():
                       update='append',
                       opts=dict(
                           xlabel='iteration',
-                          ylabel='Specific MI',
+                          ylabel='% Counts',
                           title = 'Latent 1'))
 
         # Latent 2
@@ -365,7 +365,7 @@ class Trainer1F_test():
                       update='append',
                       opts=dict(
                           xlabel='iteration',
-                          ylabel='Specific MI',
+                          ylabel='% Counts',
                           title = 'Latent 2'))
 
         # Latent 3
@@ -376,7 +376,7 @@ class Trainer1F_test():
                       update='append',
                       opts=dict(
                           xlabel='iteration',
-                          ylabel='Specific MI',
+                          ylabel='% Counts',
                           title = 'Latent 3'))
 
         # Latent 4
@@ -387,7 +387,7 @@ class Trainer1F_test():
                       update='append',
                       opts=dict(
                           xlabel='iteration',
-                          ylabel='Specific MI',
+                          ylabel='% Counts',
                           title = 'Latent 4'))
 
         # Latent 5
@@ -398,7 +398,7 @@ class Trainer1F_test():
                       update='append',
                       opts=dict(
                           xlabel='iteration',
-                          ylabel='Specific MI',
+                          ylabel='% Counts',
                           title = 'Latent 5'))
 
         # Latent 6
@@ -409,7 +409,7 @@ class Trainer1F_test():
                       update='append',
                       opts=dict(
                           xlabel='iteration',
-                          ylabel='Specific MI',
+                          ylabel='% Counts',
                           title = 'Latent 6'))
 
         # Latent 7
@@ -420,7 +420,7 @@ class Trainer1F_test():
                       update='append',
                       opts=dict(
                           xlabel='iteration',
-                          ylabel='Specific MI',
+                          ylabel='% Counts',
                           title = 'Latent 7'))
 
         # Latent 8
@@ -431,7 +431,7 @@ class Trainer1F_test():
                       update='append',
                       opts=dict(
                           xlabel='iteration',
-                          ylabel='Specific MI',
+                          ylabel='% Counts',
                           title = 'Latent 8'))
 
         # Latent 9
@@ -442,7 +442,7 @@ class Trainer1F_test():
                       update='append',
                       opts=dict(
                           xlabel='iteration',
-                          ylabel='Specific MI',
+                          ylabel='% Counts',
                           title = "Latent 9"))
 
 
