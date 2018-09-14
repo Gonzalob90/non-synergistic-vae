@@ -16,10 +16,14 @@ from main_only_syn_1F import Trainer1F
 from main_only_syn_1F_MLP import Trainer1F_MLP
 from test_1F_graphs import Trainer1F_test
 from main_BVAE_MLP import Trainer_BVAE
+from main_test_celeba import Trainer1F_celeba
 
-from dataset import get_dsprites_dataloader
 
-DATASETS = {'dsprites': [(1, 64, 64), get_dsprites_dataloader]}
+from dataset import get_dsprites_dataloader, get_celeba_dataloader, get_celeba_dataloader_gpu
+
+DATASETS = {'dsprites': [(1, 64, 64), get_dsprites_dataloader],
+            'celeba_1': [(3, 64, 64), get_celeba_dataloader],
+            'celeba': [(3, 64, 64), get_celeba_dataloader_gpu]}
 
 
 def _get_dataset(data_arg):
@@ -98,11 +102,12 @@ def main():
 
     # test images to reconstruct during training
     dataset_size = len(dataloader.dataset)
+    print(dataset_size)
     indices = np.hstack((0, np.random.choice(range(1,dataset_size),args.nb_test - 1)))
     test_imgs = torch.empty(args.nb_test, *img_dims).to(device)
 
     for i, img_idx in enumerate(indices):
-        test_imgs[i, 0] = torch.tensor(dataloader.dataset[img_idx][0])
+        test_imgs[i] = torch.tensor(dataloader.dataset[img_idx][0])
 
     # Create new dir
     if os.path.isdir(args.output_dir): shutil.rmtree(args.output_dir)
@@ -163,6 +168,11 @@ def main():
     if args.metric == "BVAE":
 
         net = Trainer_BVAE(args, dataloader, device, test_imgs)
+        net.train()
+
+    if args.metric == "Test1":
+
+        net = Trainer1F_celeba(args, dataloader, device, test_imgs)
         net.train()
 
 if __name__ == "__main__":
