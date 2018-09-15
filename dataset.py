@@ -44,7 +44,7 @@ def convert_celeba_64(image_file_path):
                 dataset_clean.append(np.asarray(image).transpose(2, 0, 1) / 255)
 
     dataset_clean = np.array(dataset_clean)
-    print(dataset_clean.shape)
+    #print(dataset_clean.shape)
     return dataset_clean
 
 
@@ -59,7 +59,7 @@ def convert_celeba_64_a():
         dataset_clean.append(np.asarray(image).transpose(2, 0, 1) / 255)
 
     dataset_clean = np.array(dataset_clean)
-    print(dataset_clean.shape)
+    #print(dataset_clean.shape)
     return dataset_clean
 
 
