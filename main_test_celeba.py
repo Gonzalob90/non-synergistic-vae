@@ -8,7 +8,6 @@ import os
 
 from ops import recon_loss, kl_div, permute_dims, kl_div_uni_dim
 from utils import traverse_faces
-from model import VAE
 from model_celeb import VAE_faces
 
 from test import I_max_batch, e_greedy_policy_Smax_discount, greedy_policy_Smax_discount_worst
@@ -39,10 +38,7 @@ class Trainer1F_celeba():
         self.beta2_VAE = args.beta2_VAE
 
 
-        if self.args.dataset == "celeba_1":
-            self.VAE = VAE_faces(self.z_dim).to(self.device)
-        else:
-            self.VAE = VAE(self.z_dim).to(self.device)
+        self.VAE = VAE_faces(self.z_dim).to(self.device)
         self.optim_VAE = optim.Adam(self.VAE.parameters(), lr=self.lr_VAE,
                                     betas=(self.beta1_VAE, self.beta2_VAE))
 
