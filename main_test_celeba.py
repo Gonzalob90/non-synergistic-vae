@@ -74,8 +74,8 @@ class Trainer1F_celeba():
                 # VAE
                 #x_true1 = x_true1.unsqueeze(1).to(self.device)
                 x_true1 = x_true1.to(self.device)
-                print(x_true1.size())
-                print()
+                #print(x_true1.size())
+                #print()
 
                 x_recon, mu, logvar, z = self.VAE(x_true1)
 
