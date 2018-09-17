@@ -17,9 +17,10 @@ from main_only_syn_1F_MLP import Trainer1F_MLP
 from test_1F_graphs import Trainer1F_test
 from main_BVAE_MLP import Trainer_BVAE
 from main_test_celeba import Trainer1F_celeba
+from main_only_syn_1F_plot_gt import  Trainer1F_gt
 
 
-from dataset import get_dsprites_dataloader, get_celeba_dataloader, get_celeba_dataloader_gpu
+from dataset import get_dsprites_dataloader, get_celeba_dataloader, get_celeba_dataloader_gpu, get_dsprites_dataloader_gt
 
 DATASETS = {'dsprites': [(1, 64, 64), get_dsprites_dataloader],
             'celeba_1': [(3, 64, 64), get_celeba_dataloader],
@@ -100,6 +101,9 @@ def main():
     img_dims, dataloader = _get_dataset(args.dataset)
     dataloader = dataloader(args.batch_size)
 
+    # data loader gt
+    dataloader_gt = get_dsprites_dataloader_gt(args.batch_size)
+
     # test images to reconstruct during training
     dataset_size = len(dataloader.dataset)
     print(dataset_size)
@@ -173,6 +177,11 @@ def main():
     if args.metric == "Test1":
 
         net = Trainer1F_celeba(args, dataloader, device, test_imgs)
+        net.train()
+
+    if args.metric == "Test_gt":
+
+        net = Trainer1F_gt(args, dataloader, device, test_imgs, dataloader_gt)
         net.train()
 
 if __name__ == "__main__":
