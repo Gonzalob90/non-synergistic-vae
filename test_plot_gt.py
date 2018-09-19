@@ -24,7 +24,7 @@ def plot_gt_shapes(train_model, model, dataloder_gt, save_path):
     qz_params = torch.Tensor(N, K, nparams)
 
     n = 0
-    for xs in dataloder_gt:
+    for xs, xs2 in dataloder_gt:
         batch_size = xs.size(0)
         xs = Variable(xs.view(batch_size, 1, 64, 64).cuda(), volatile=True) # only inference
         qz_params[n:n + batch_size] = model(xs, decode=False)[1:3]
