@@ -74,6 +74,7 @@ def plot_gt_shapes(train_model, model, dataloder_gt, save_path):
         ax.set_yticks([])
         print("j {}".format(j))
         print(str(j))
+        print(str(j.data))
         print(r'$z_' + str(j) + r'$')
         print(r'$z_' + str(j))
         #ax.set_ylabel(r'$z_' + str(j) + r'$', fontsize=8)
