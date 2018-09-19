@@ -72,6 +72,11 @@ def plot_gt_shapes(train_model, model, dataloder_gt, save_path):
         ax.imshow(mean_pos[:, :, j].numpy(), cmap=plt.get_cmap('coolwarm'), vmin=vmin_pos, vmax=vmax_pos)
         ax.set_xticks([])
         ax.set_yticks([])
+        print("j {}".format(j))
+        print(str(j))
+        print(r'$z_' + str(j) + r'$')
+        print(r'$z_' + str(j))
+        #ax.set_ylabel(r'$z_' + str(j) + r'$', fontsize=8)
         ax.set_ylabel(r'$z_' + str(j) + r'$', fontsize=8)
         if i == len(z_inds) - 1:
             ax.set_xlabel(r'pos')
