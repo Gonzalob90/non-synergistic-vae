@@ -18,24 +18,31 @@ def plot_gt_shapes(train_model, model, dataloder_gt, save_path):
 
     N = len(dataloder_gt.dataset)  # number of data samples
     K = model.z_dim
-    nparams = 2
+    #nparams = 1
 
     # print('Computing q(z|x) distributions.')
-    qz_params = torch.Tensor(N, K, nparams)
+    qz_params = torch.Tensor(N, K)
+    #print(qz_params.size())
 
     n = 0
     for xs, xs2 in dataloder_gt:
         batch_size = xs.size(0)
-        xs = Variable(xs.view(batch_size, 1, 64, 64).cuda(), volatile=True) # only inference
-        qz_params[n:n + batch_size] = model(xs, decode=False)[1:3]
-
+        #xs = Variable(xs.view(batch_size, 1, 64, 64).cuda(), volatile=True)
+        #xs = Variable(xs.view(batch_size, 1, 64, 64).cpu())#  only inference
+        xs = Variable(xs.view(batch_size, 1, 64, 64).cuda())
+        #print(model(xs, decode=False)[1].size())
+        #print(qz_params[n:n + batch_size].size())
+        with torch.no_grad():
+            qz_params[n:n + batch_size] = model(xs, decode=False)[1]
         n += batch_size
 
     # Primitive factors: shapes, scale, orientation, position, position
-    qz_params = qz_params.view(3, 6, 40, 32, 32, K, nparams)
+    #qz_params = qz_params.view(3, 6, 40, 32, 32, K, nparams)
+    qz_params = qz_params.view(3, 6, 40, 32, 32, K)
 
     # z_j is inactive if Var_x(E[z_j|x]) < eps.
-    qz_means = qz_params[:, :, :, :, :, :, 0]
+    #qz_means = qz_params[:, :, :, :, :, :, 0]
+    qz_means = qz_params
 
     var = torch.std(qz_means.contiguous().view(N, K), dim=0).pow(2) # pow is just **2, contiguous in memory
     active_units = torch.arange(0, K)[var > VAR_THRESHOLD].long()
