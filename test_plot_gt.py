@@ -58,6 +58,8 @@ def plot_gt_shapes(train_model, model, dataloder_gt, save_path):
     mean_rotation = qz_means.mean(1).mean(2).mean(2)  # (shape, rotation, latent)
     mean_pos = qz_means.mean(0).mean(0).mean(0)  # (pos_x, pos_y, latent)
 
+    #plt.rc('axes', labelsize=8)
+
     fig = plt.figure(figsize=(3, len(z_inds)))  # default is (8,6)
     gs = gridspec.GridSpec(len(z_inds), 3)
     gs.update(wspace=0, hspace=0)  # set the spacing between axes.
@@ -70,7 +72,7 @@ def plot_gt_shapes(train_model, model, dataloder_gt, save_path):
         ax.imshow(mean_pos[:, :, j].numpy(), cmap=plt.get_cmap('coolwarm'), vmin=vmin_pos, vmax=vmax_pos)
         ax.set_xticks([])
         ax.set_yticks([])
-        ax.set_ylabel(r'$z_' + str(j) + r'$')
+        ax.set_ylabel(r'$z_' + str(j) + r'$', fontsize=8)
         if i == len(z_inds) - 1:
             ax.set_xlabel(r'pos')
 
