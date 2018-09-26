@@ -12,7 +12,7 @@ from model import VAE
 from test_plot_gt import plot_gt_shapes
 
 from test import I_max_batch, e_greedy_policy_Smax_discount, greedy_policy_Smax_discount_worst
-
+from test_MIG import mutual_info_metric_shapes
 
 torch.set_printoptions(precision=6)
 
@@ -68,9 +68,7 @@ class Trainer1F_gt():
             for x_true1, x_true2 in self.dataloader:
 
                 #if step == 2: break
-
                 step += 1
-
 
                 # VAE
                 x_true1 = x_true1.unsqueeze(1).to(self.device)
@@ -232,6 +230,9 @@ class Trainer1F_gt():
                     filename = 'alpha_' + str(self.alpha) + '_gt_' + str(step) + '.png'
                     filepath = os.path.join(self.args.output_dir, filename)
                     plot_gt_shapes(self.net_mode, self.VAE, self.dataloader_gt, filepath)
+                    MIG = mutual_info_metric_shapes(self.net_mode, self.VAE, self.dataloader_gt)
+                    print("MIG = " + "{:.4f}".format(MIG))
+
 
     def net_mode(self, train):
         if not isinstance(train, bool):
