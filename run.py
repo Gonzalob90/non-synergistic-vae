@@ -79,7 +79,8 @@ def parse():
     parser.add_argument('--log-interval', type=int, default=500)
     parser.add_argument('--plot-interval', type=int, default=500)
     parser.add_argument('--save-interval', type=int, default=2000)
-    parser.add_argument('--gt-interval', type=int, default=5000)
+    parser.add_argument('--gt-interval', type=int, default=20000)
+    parser.add_argument('--mig-interval', type=int, default=50000)
     parser.add_argument('--seq-interval', type=int, default=2000)
 
     # Visdom
