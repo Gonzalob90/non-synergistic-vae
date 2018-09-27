@@ -202,4 +202,7 @@ def mutual_info_metric_shapes(train_model, model, dataloder_gt):
 
 
     metric = compute_metric_shapes(marginal_entropies, cond_entropies)
+
+    train_model(train=True)
+
     return metric, marginal_entropies, cond_entropies
