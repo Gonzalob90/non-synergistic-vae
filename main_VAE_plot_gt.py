@@ -12,7 +12,7 @@ from test_plot_gt import plot_gt_shapes
 
 torch.set_printoptions(precision=6)
 
-class Trainer1F_gt():
+class Trainer_VAE_gt():
 
     def __init__(self, args, dataloader, device, test_imgs, dataloader_gt):
 
@@ -53,6 +53,7 @@ class Trainer1F_gt():
 
         epochs = int(np.ceil(self.steps)/len(self.dataloader))
         print("number of epochs {}".format(epochs))
+        print("Run VAE with gt plots and traversals")
 
         step = 0
 

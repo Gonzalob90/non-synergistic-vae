@@ -19,6 +19,7 @@ from main_BVAE_MLP import Trainer_BVAE
 from main_test_celeba import Trainer1F_celeba
 from main_only_syn_1F_plot_gt import  Trainer1F_gt
 from main_VAE import Trainer_VAE
+from main_VAE_plot_gt import Trainer_VAE_gt
 from main_factor import Trainer_Factor
 
 
@@ -79,7 +80,7 @@ def parse():
     parser.add_argument('--log-interval', type=int, default=500)
     parser.add_argument('--plot-interval', type=int, default=500)
     parser.add_argument('--save-interval', type=int, default=2000)
-    parser.add_argument('--gt-interval', type=int, default=20000)
+    parser.add_argument('--gt-interval', type=int, default=10000)
     parser.add_argument('--mig-interval', type=int, default=50000)
     parser.add_argument('--seq-interval', type=int, default=2000)
 
@@ -191,6 +192,11 @@ def main():
     if args.metric == "VAE":
 
         net = Trainer_VAE(args, dataloader, device, test_imgs, dataloader_gt)
+        net.train()
+
+    if args.metric == "VAE_gt":
+
+        net = Trainer_VAE_gt(args, dataloader, device, test_imgs, dataloader_gt)
         net.train()
 
     if args.metric == "Factor":
