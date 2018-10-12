@@ -21,7 +21,7 @@ from main_only_syn_1F_plot_gt import  Trainer1F_gt
 from main_VAE import Trainer_VAE
 from main_VAE_plot_gt import Trainer_VAE_gt
 from main_factor import Trainer_Factor
-from main_BVAE import Trainer_BVAE_conv
+from main_BVAE_plot_gt import Trainer_BVAE_gt
 
 
 from dataset import get_dsprites_dataloader, get_celeba_dataloader, get_celeba_dataloader_gpu, get_dsprites_dataloader_gt
@@ -205,9 +205,9 @@ def main():
         net = Trainer_Factor(args, dataloader, device, test_imgs, dataloader_gt)
         net.train()
 
-    if args.metric == "BVAE_conv":
+    if args.metric == "BVAE_gt":
 
-        net = Trainer_BVAE_conv(args, dataloader, device, test_imgs, dataloader_gt)
+        net = Trainer_BVAE_gt(args, dataloader, device, test_imgs, dataloader_gt)
         net.train()
 
 if __name__ == "__main__":
