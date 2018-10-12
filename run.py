@@ -177,7 +177,7 @@ def main():
 
     if args.metric == "BVAE":
 
-        net = Trainer_BVAE(args, dataloader, device, test_imgs)
+        net = Trainer_BVAE(args, dataloader, device, test_imgs, dataloader_gt)
         net.train()
 
     if args.metric == "Test1":
