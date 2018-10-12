@@ -85,7 +85,6 @@ def traverse(train_model, model, test_imgs, save_path):
 
 def traverse_mlp(train_model, model, test_imgs, save_path):
 
-    print("here")
 
     train_model(train=False)
 
