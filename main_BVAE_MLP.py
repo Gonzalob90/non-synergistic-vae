@@ -7,8 +7,9 @@ import torch.optim as optim
 import os
 
 from ops import recon_loss, kl_div, permute_dims, kl_div_uni_dim
-from utils import traverse
+from utils import traverse_mlp
 from model_fc import VAE_MLP
+from test_plot_gt import plot_gt_shapes_bvae
 
 from test import I_max_batch, e_greedy_policy_Smax_discount, greedy_policy_Smax_discount_worst
 
@@ -17,11 +18,12 @@ torch.set_printoptions(precision=6)
 
 class Trainer_BVAE():
 
-    def __init__(self, args, dataloader, device, test_imgs):
+    def __init__(self, args, dataloader, device, test_imgs, dataloader_gt):
 
         self.device = device
         self.args = args
         self.dataloader = dataloader
+        self.dataloader_gt = dataloader_gt
 
         # Data
         self.dataset = args.dataset
@@ -99,7 +101,13 @@ class Trainer_BVAE():
                 if not step % self.args.save_interval:
                     filename = 'alpha_' + str(self.alpha) + '_traversal_' + str(step) + '.png'
                     filepath = os.path.join(self.args.output_dir, filename)
-                    traverse(self.net_mode, self.VAE, self.test_imgs, filepath)
+                    traverse_mlp(self.net_mode, self.VAE, self.test_imgs, filepath)
+
+                # Saving plot gt vs predicted
+                if not step % self.args.gt_interval:
+                    filename = 'vae_gt_' + str(step) + '.png'
+                    filepath = os.path.join(self.args.output_dir, filename)
+                    plot_gt_shapes_bvae(self.net_mode, self.VAE, self.dataloader_gt, filepath)
 
     def net_mode(self, train):
         if not isinstance(train, bool):
