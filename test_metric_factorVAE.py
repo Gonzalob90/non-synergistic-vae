@@ -75,6 +75,9 @@ def factor_vae_metric_shapes(train_model, model, votes = 800):
 
     for v in range(votes):
 
+        if v % 20 == 0:
+            print("vote {}".format(v))
+
         training_set = []
 
         for i in range(M) :
@@ -186,8 +189,8 @@ def factor_vae_metric_shapes(train_model, model, votes = 800):
             vote_list.append(k_max)
 
         # vote list = [4, 2, 2, 1, 2, 3, 0, 3, 0, 1]
-        print("vote list {}".format(vote_list))
-        print(fdfdfdf)
+        #print("vote list {}".format(vote_list))
+        #print(fdfdfdf)
 
         #len(vote_list) = 10, Vjk
         vote_list = np.array(vote_list).reshape(1,10)
