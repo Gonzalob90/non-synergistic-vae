@@ -12,7 +12,7 @@ from model import VAE
 from test_plot_gt import plot_gt_shapes
 
 from test import I_max_batch, e_greedy_policy_Smax_discount, greedy_policy_Smax_discount_worst
-from test_metric_factorVAE import factor_vae_metric_shapes
+from test_metric_factorVAE import factor_vae_metric_shapes, factor_vae_metric_shapes_v2
 
 torch.set_printoptions(precision=6)
 
@@ -238,7 +238,8 @@ class Trainer1F_metricFactor():
 
                 if not step % self.args.mig_interval:
                     print("computing FactorVAE metric")
-                    metric = factor_vae_metric_shapes(self.net_mode, self.VAE)
+                    metric = factor_vae_metric_shapes_v2(self.net_mode, self.VAE)
+                    #metric = factor_vae_metric_shapes(self.net_mode, self.VAE)
                     print("Metric = " + "{:.4f}".format(metric))
 
 
