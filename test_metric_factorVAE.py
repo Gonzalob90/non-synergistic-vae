@@ -262,11 +262,11 @@ def factor_vae_metric_shapes_v2(train_model, model, votes = 500):
 
     L = 100
     M = 100
-    K_big = 5
+    K_big = 6
     D = model.z_dim
     training_set = []
 
-    for k_dim in range(K_big):
+    for k_dim in range(1, K_big):
 
         print("k_dim {}".format(k_dim))
 
