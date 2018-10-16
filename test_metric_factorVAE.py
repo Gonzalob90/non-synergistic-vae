@@ -161,7 +161,7 @@ def factor_vae_metric_shapes(train_model, model, votes = 800):
 
         # Matrix of votes
 
-        print("train set {}".format(training_set))
+        #print("train set {}".format(training_set))
 
         vote = np.zeros((10, 5))
         for j in range(10):
