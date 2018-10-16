@@ -45,20 +45,18 @@ def gini_variance(qz_samples_norm, active_latents_index):
 
         d = 0
 
-        print(len(qz_samples_norm[dim.item()]))
-        print(qz_samples_norm[dim.item()])
-        print(fdfd)
+        #print(len(qz_samples_norm[dim.item()]))
+        #print(qz_samples_norm[dim.item()])
 
         for i in qz_samples_norm[dim.item()]:
             for j in qz_samples_norm[dim.item()]:
 
-                print("i {}, j {}".format(i,j))
+                #print("i {}, j {}".format(i,j))
 
-                if torch.eq(i,j):
-                    d += 0
-                else:
-                    d += 1
-        print("d {}".format(d))
+                d += (i - j).pow(2).item()
+
+
+        #print("dim {}, d {}".format(dim, d))
         #print(dsdsd)
         var = d / (2 * L * (L-1))
         gini[dim.item()] = var
@@ -106,15 +104,14 @@ def factor_vae_metric_shapes(train_model, model, votes = 800):
             xs = xs.type(torch.float)
             #print("xs type {}".format(xs.type()))
 
-            #xs_sampled = xs.unsqueeze(1).cuda()
             xs_sampled = xs.unsqueeze(1).to("cuda")
+            #xs_sampled = xs.unsqueeze(1).to("cpu")
             #print("xs sampled {}".format(xs_sampled.size()))
 
             # Sample Z
             qz_means = model(xs_sampled, decode=False)[1]
             qz_samples = model(xs_sampled, decode=False)[3]
             #print("qz_means size {}".format(qz_means.size()))
-
 
             qz_samples = qz_samples.cuda()
             #qz_samples = qz_samples.cpu()
@@ -127,7 +124,7 @@ def factor_vae_metric_shapes(train_model, model, votes = 800):
 
             # Normalise
             qz_samples_norm = qz_samples / s
-            #print("qz samples norm size {}".format(qz_samples_norm.size()))
+            # print("qz samples norm size {}".format(qz_samples_norm.size()))
             # qz_samples_norm shape (100,10)
 
             # prune active units
@@ -146,10 +143,9 @@ def factor_vae_metric_shapes(train_model, model, votes = 800):
             #print("qz samples norm size {}".format(qz_samples_norm.keys()))
 
             # compute the Gini empirical variance, vars is a dict
-            #active_units = torch.arange(0,10)
+            active_units = torch.arange(0,10)
             vars = gini_variance(qz_samples_norm, active_units)
             print("Gini variance {}".format(vars.values()))
-            #print(ddsdsd)
 
             # get the argmin
             d_star = min(vars, key=vars.get)
@@ -157,6 +153,8 @@ def factor_vae_metric_shapes(train_model, model, votes = 800):
 
             train_point = (d_star, k_dim)
             print("train_point {}".format(train_point))
+
+            print(ffdf)
 
             training_set.append(train_point)
 
