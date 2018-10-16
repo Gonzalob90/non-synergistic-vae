@@ -45,13 +45,14 @@ def gini_variance(qz_samples_norm, active_latents_index):
 
         d = 0
 
-        #print(len(qz_samples_norm[dim.item()]))
-        #print(qz_samples_norm[dim.item()])
+        print(len(qz_samples_norm[dim.item()]))
+        print(qz_samples_norm[dim.item()])
+        print(fdfdf)
 
         for i in qz_samples_norm[dim.item()]:
             for j in qz_samples_norm[dim.item()]:
 
-                #print("i {}, j {}".format(i,j))
+                print("i {}, j {}".format(i,j))
 
                 d += (i - j).pow(2).item()
 
@@ -140,7 +141,7 @@ def factor_vae_metric_shapes(train_model, model, votes = 800):
             # Prune the uninformative latents
             qz_samples_norm = {a.item(): qz_samples_norm[:, a] for a in active_units}
             #qz_samples_norm = {a: qz_samples_norm[:,a] for a in range(10)}
-            #print("qz samples norm size {}".format(qz_samples_norm.keys()))
+            print("qz samples norm size {}".format(qz_samples_norm.keys()))
 
             # compute the Gini empirical variance, vars is a dict
             active_units = torch.arange(0,10)
