@@ -45,19 +45,18 @@ def gini_variance(qz_samples_norm, active_latents_index):
 
         d = 0
 
-        print(len(qz_samples_norm[dim.item()]))
-        print(qz_samples_norm[dim.item()])
+        #print(len(qz_samples_norm[dim.item()]))
+        #print(qz_samples_norm[dim.item()])
 
         for i in qz_samples_norm[dim.item()]:
             for j in qz_samples_norm[dim.item()]:
 
-                print("i {}, j {}".format(i,j))
+                #print("i {}, j {}".format(i,j))
 
                 d += (i - j).pow(2).item()
-                print(d)
+                #print(d)
 
         print("dim {}, d {}".format(dim, d))
-        print(dsdsd)
 
         var = d / (2 * L * (L-1))
         gini[dim.item()] = var
