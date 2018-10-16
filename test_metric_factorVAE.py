@@ -79,7 +79,7 @@ def factor_vae_metric_shapes(train_model, model, votes = 800):
 
         for i in range(M) :
 
-            print("vote {}, i {}".format(v,i))
+            #print("vote {}, i {}".format(v,i))
 
             # fix one factor
             #sample a dimension
@@ -87,8 +87,8 @@ def factor_vae_metric_shapes(train_model, model, votes = 800):
             # sample the factor k
             factor_k = random.sample(range(latents_sizes[k_dim]), 1)[0]
 
-            print("k_dim {}".format(k_dim))
-            print("factor_k {}".format(factor_k))
+            #print("k_dim {}".format(k_dim))
+            #print("factor_k {}".format(factor_k))
 
             ## Sample using the factor k
             latents_sampled = sample_latent(size=L)
@@ -119,7 +119,7 @@ def factor_vae_metric_shapes(train_model, model, votes = 800):
 
             # Compute the standard deviation
             s = torch.std(qz_samples, dim = 0)
-            print("s {}".format(s))
+            #print("s {}".format(s))
             #print("s size {} ".format(s.size()))
 
             # Normalise
@@ -130,7 +130,7 @@ def factor_vae_metric_shapes(train_model, model, votes = 800):
             # prune active units
             var = torch.std(qz_means.contiguous().view(L, D), dim=0).pow(2)  # pow is just **2, contiguous in memory
             active_units = torch.arange(0, D)[var > VAR_THRESHOLD].long()
-            print('Active units: ' + ','.join(map(str, active_units.tolist())))
+            #print('Active units: ' + ','.join(map(str, active_units.tolist())))
 
             #if len(active_units) > 6:
             #    active_units_prune = var.sort(descending=True)[1][var.sort(descending=True)[0] > VAR_THRESHOLD][:top_dim].long()
@@ -140,27 +140,25 @@ def factor_vae_metric_shapes(train_model, model, votes = 800):
             # Prune the uninformative latents
             qz_samples_norm = {a.item(): qz_samples_norm[:, a] for a in active_units}
             #qz_samples_norm = {a: qz_samples_norm[:,a] for a in range(10)}
-            print("qz samples norm size {}".format(qz_samples_norm.keys()))
+            #print("qz samples norm size {}".format(qz_samples_norm.keys()))
 
             # compute the Gini empirical variance, vars is a dict
             #active_units = torch.arange(0,10)
             vars = gini_variance(qz_samples_norm, active_units)
-            print("Gini variance {}".format(vars.values()))
+            #print("Gini variance {}".format(vars.values()))
 
             # get the argmin
             d_star = min(vars, key=vars.get)
-            print("d_star {}".format(d_star))
+            #print("d_star {}".format(d_star))
 
             train_point = (d_star, k_dim)
-            print("train_point {}".format(train_point))
-
-            print(ffdf)
+            #print("train_point {}".format(train_point))
 
             training_set.append(train_point)
 
         # Matrix of votes
 
-        #print("train set {}".format(training_set))
+        print("train set {}".format(training_set))
 
         vote = np.zeros((10, 5))
         for j in range(10):
@@ -188,7 +186,8 @@ def factor_vae_metric_shapes(train_model, model, votes = 800):
             vote_list.append(k_max)
 
         # vote list = [4, 2, 2, 1, 2, 3, 0, 3, 0, 1]
-        #print("vote list {}".format(vote_list))
+        print("vote list {}".format(vote_list))
+        print(fdfdfdf)
 
         #len(vote_list) = 10, Vjk
         vote_list = np.array(vote_list).reshape(1,10)
