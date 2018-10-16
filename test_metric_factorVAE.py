@@ -143,7 +143,7 @@ def factor_vae_metric_shapes(train_model, model, votes = 800):
             print("qz samples norm size {}".format(qz_samples_norm.keys()))
 
             # compute the Gini empirical variance, vars is a dict
-            active_units = torch.arange(0,10)
+            #active_units = torch.arange(0,10)
             vars = gini_variance(qz_samples_norm, active_units)
             print("Gini variance {}".format(vars.values()))
 
