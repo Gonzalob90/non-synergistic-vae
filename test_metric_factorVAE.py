@@ -352,9 +352,9 @@ def factor_vae_metric_shapes_v2(train_model, model, votes = 500):
     # Matrix of votes
     #print("train set {}".format(training_set))
 
-    vote = np.zeros((10, 5))
+    vote = np.zeros((10, 6))
     for j in range(10):
-        for k in range(5):
+        for k in range(1,6):
             vote[j, k] = sum([1 for d, k_f in training_set if d == j and k == k_f])
 
     """ vote =  array([[0., 0., 0., 0., 0.],
@@ -375,7 +375,7 @@ def factor_vae_metric_shapes_v2(train_model, model, votes = 500):
     # put in a dict all the votes per dimension
     dict_cj = defaultdict(list)
     for j in range(10):
-        dict_cj[j].append(list_votes[j, :])
+        dict_cj[j]= list_votes[j, :]
 
     """ defaultdict(list,
             {0: [4, 3, 4],
@@ -388,6 +388,8 @@ def factor_vae_metric_shapes_v2(train_model, model, votes = 500):
              7: [3, 3, 3],
              8: [0, 2, 0],
              9: [1, 1, 2]}) """
+
+    print("dict_cj {}".format(dict_cj))
 
     # put in a dict the counts per dimension
     dict_votes_final = {}
