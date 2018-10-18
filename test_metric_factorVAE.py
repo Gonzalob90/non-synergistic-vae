@@ -372,57 +372,28 @@ def factor_vae_metric_shapes_v2(train_model, model, votes = 500):
 
     list_votes = vote
 
-    # put in a dict all the votes per dimension
-    dict_cj = defaultdict(list)
-    for j in range(10):
-        dict_cj[j]= list_votes[j, :]
+    final_votes_list = []
+    counter = 0
+    for row in list_votes:
+        k_max = np.argmax(row)
+        value_max = row[int(k_max)]
+        if np.sum(row) > 0:
+            factor_metric = value_max / np.sum(row)
+        else:
+            factor_metric = 0.0
+        if sum(row) > 30.:
+            final_votes_list.append(factor_metric)
+            counter += 1
+        else:
+            final_votes_list.append(0.0)
+    print("final_votes_list {}".format(final_votes_list))
+    print("counter {}".format(counter))
 
-    """ defaultdict(list,
-            {0: [4, 3, 4],
-             1: [2, 2, 3],
-             2: [2, 2, 3],
-             3: [1, 1, 1],
-             4: [2, 2, 2],
-             5: [3, 3, 2],
-             6: [0, 0, 0],
-             7: [3, 3, 3],
-             8: [0, 2, 0],
-             9: [1, 1, 2]}) """
-
-    print("dict_cj {}".format(dict_cj))
-
-    # put in a dict the counts per dimension
-    dict_votes_final = {}
-    for key in dict_cj.keys():
-        dict_votes_final[key] = Counter(dict_cj[key])
-
-    """{0: Counter({3: 1, 4: 2}),
-        1: Counter({2: 2, 3: 1}),
-        2: Counter({2: 2, 3: 1}),
-        3: Counter({1: 3}),
-        4: Counter({2: 3}),
-        5: Counter({2: 1, 3: 2}),
-        6: Counter({0: 3}),
-        7: Counter({3: 3}),
-        8: Counter({0: 2, 2: 1}),
-        9: Counter({1: 2, 2: 1})}"""
-
-    print("dict_votes_final {}".format(dict_votes_final))
-
-    # Get the metric values
-    metric_values = []
-    for i in range(10):
-        j, count = dict_votes_final[i].most_common()[0]
-        value = round(count / sum(dict_votes_final[i].values()), 3)
-        metric_values.append(value)
-
-    # Prune the values of the metric to 5.
-    print("metric values {}".format(metric_values))
-    factors_metric = [i for i in metric_values if i > 0.3][:6]
-    print("factors values {}".format(metric_values))
-    metric = sum(factors_metric) / 5
+    metric = np.sum(final_votes_list) / 6
 
     train_model(train=True)
 
     return metric
+
+
 
