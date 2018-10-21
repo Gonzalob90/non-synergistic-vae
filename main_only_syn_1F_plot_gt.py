@@ -231,10 +231,10 @@ class Trainer1F_gt():
                     filepath = os.path.join(self.args.output_dir, filename)
                     plot_gt_shapes(self.net_mode, self.VAE, self.dataloader_gt, filepath)
 
-                if not step % self.args.mig_interval:
-                    print("computing MIG")
-                    MIG,_,_ = mutual_info_metric_shapes(self.net_mode, self.VAE, self.dataloader_gt)
-                    print("MIG = " + "{:.4f}".format(MIG))
+                #if not step % self.args.mig_interval:
+                #    print("computing MIG")
+                #    MIG,_,_ = mutual_info_metric_shapes(self.net_mode, self.VAE, self.dataloader_gt)
+                #    print("MIG = " + "{:.4f}".format(MIG))
 
 
     def net_mode(self, train):
