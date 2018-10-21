@@ -23,7 +23,7 @@ from main_VAE_plot_gt import Trainer_VAE_gt
 from main_factor import Trainer_Factor
 from main_BVAE_plot_gt import Trainer_BVAE_gt
 from main_only_syn_1F_metric_factor import Trainer1F_metricFactor
-
+from main_BVAE_capacity import Trainer_BVAE_capacity
 
 from dataset import get_dsprites_dataloader, get_celeba_dataloader, get_celeba_dataloader_gpu, get_dsprites_dataloader_gt
 
@@ -214,6 +214,11 @@ def main():
     if args.metric == "test_metric":
 
         net = Trainer1F_metricFactor(args, dataloader, device, test_imgs, dataloader_gt)
+        net.train()
+
+    if args.metric == "BVAE_capacity":
+
+        net = Trainer_BVAE_capacity(args, dataloader, device, test_imgs, dataloader_gt)
         net.train()
 
 if __name__ == "__main__":
