@@ -6,7 +6,7 @@ import torch.nn.functional as F
 import torch.optim as optim
 import os
 
-from ops import recon_loss, kl_div, permute_dims, kl_div_uni_dim
+from ops import recon_loss, kl_div, permute_dims, kl_div_uni_dim,, recon_loss_faces
 from utils import traverse_faces
 from model_celeb import VAE_faces
 
@@ -81,7 +81,7 @@ class Trainer1F_celeba():
 
                 # Reconstruction and KL
 
-                vae_recon_loss = recon_loss(x_true1, x_recon)
+                vae_recon_loss = recon_loss_faces(x_true1, x_recon)
                 vae_kl = kl_div(mu, logvar)
 
                 # VAE loss
