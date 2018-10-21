@@ -258,6 +258,9 @@ def factor_vae_metric_shapes(train_model, model, votes = 800):
 
 def factor_vae_metric_shapes_v2(train_model, model, votes = 500):
 
+    # I believe that one vote is for one seed. So this implementation
+    # is just for 1 vote.
+
     train_model(train=False)
 
     L = 100
