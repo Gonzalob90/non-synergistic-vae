@@ -7,6 +7,11 @@ def recon_loss(x, x_recon):
     loss = F.binary_cross_entropy_with_logits(x_recon, x, size_average=False).div(n)
     return loss
 
+def recon_loss_faces(x, x_recon):
+    n = x.size(0)
+    x_recon = F.sigmoid(x_recon)
+    loss = F.mse_loss(x_recon, x, size_average=False).div(n)
+    return loss
 
 def kl_div(mu, logvar):
     kld = -0.5 * (1 + logvar - mu ** 2 - logvar.exp()).sum(1).mean()
