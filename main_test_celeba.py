@@ -6,7 +6,7 @@ import torch.nn.functional as F
 import torch.optim as optim
 import os
 
-from ops import recon_loss, kl_div, permute_dims, kl_div_uni_dim,, recon_loss_faces
+from ops import recon_loss, kl_div, permute_dims, kl_div_uni_dim, recon_loss_faces
 from utils import traverse_faces
 from model_celeb import VAE_faces
 
