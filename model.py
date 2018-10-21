@@ -80,12 +80,15 @@ class VAE(nn.Module):
             nn.ReLU(),
             Flatten(),
             nn.Linear(64 * 4 * 4, 128),
+            nn.ReLU(),
             nn.Linear(128, 2 * z_dim)
         )
 
         self.decoder = nn.Sequential(
             nn.Linear(z_dim, 128),
+            nn.ReLU(),
             nn.Linear(128, 64 * 4 * 4),
+            nn.ReLU(),
             Reshape(-1, 64, 4, 4),
             nn.ConvTranspose2d(64, 64, 4, 2, 1),
             nn.ReLU(),
