@@ -80,7 +80,7 @@ class VAE(nn.Module):
             nn.ReLU(),
             Flatten(),
             nn.Linear(64 * 4 * 4, 128),
-            nn.ReLU(),
+            #nn.ReLU(),
             nn.Linear(128, 2 * z_dim)
         )
 
