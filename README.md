@@ -97,7 +97,7 @@ We plot the Reconstruction loss, the KL loss and the synergy loss for the first 
 We show below the trasverse of latents for the dataset CelebA ( http://mmlab.ie.cuhk.edu.hk/projects/CelebA.html ) using the same procedure as for the dsprites dataset. In terms of implementation, the difference between this CelebA and dsprites was that for the latter we used a Cross-Entropy loss for the reconstruction term whereas for the former one we used a Mean Square Error Loss. 
 
 <p align="center">
-<img src=misc/faces_celelba.png>
+<img src=misc/faces_celeba.png>
 </p>
 
 ### References
