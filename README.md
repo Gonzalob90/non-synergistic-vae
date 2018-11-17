@@ -1,5 +1,5 @@
 # Non-Synergistic VAE
-Pytorch implementation of Non-Synergistic Variational Autoencoders. Abstract: http://bit.ly/2PTwAC5 
+Pytorch implementation of Non-Synergistic Variational Autoencoders. Abstract: http://bit.ly/2RG0ZVe 
 
 This work is the result of the dissertation of my M.Sc. Machine Learning from UCL.
 It has been accepted to:
