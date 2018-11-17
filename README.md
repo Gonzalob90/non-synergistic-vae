@@ -51,19 +51,52 @@ python run.py --alpha=5.0 --omega=0.9 --metric="test" --steps=150000
 
 ### Results - 2D Shapes(dsprites) Dataset
 
+Dsprites is a dataset of 2d shapes generated from 6 ground truth independent latent factors: color, shape, scale, rotation, x and y positions. There are a total of 737280 examples generated from the combination of the values of each of these factors:
+
+* Color: white
+* Shape: square, ellipse, heart
+* Scale: 6 values linearly spaced in [0.5, 1]
+* Orientation: 40 values in [0, 2 pi]
+* Position X: 32 values in [0, 1]
+* Position Y: 32 values in [0, 1]
+
 #### Latent Space Traverse
+
+We show below the reconstructions resulting from the traversal of each latent z_i over three standard deviations around the unit Gaussian prior mean while keeping the remaining 9/10 latent units fixed to the values obtained by running inference on an image from the dataset. Row 1 is the original, row 2 is the reconstruction, and row 3 to 12 represent each latent z_i. In this gif, we print images every 2000 steps up to 110k steps. As you can see, the model learns the scale, rotation (2), x and y axis in an unsupervised setting. 
+
+<br>
 <p align="center">
 <img src=misc/traversals.gif>
 </p>
 <br>
 
 #### Comparison with Factor VAE
+
+We compare our model with Factor VAE. On the left, we show the latent traversals (110k steps) for Non-Syn VAE and Factor VAE. We put the name of the learned latent for an easier visualisation. On the right, we show the mean activations of the latents, which are figures that represent the values of the learned latent averaged across the other variables. For example, for Non-Syn VAE, z2 and z5 represent the "y" axis and "x" axis respectevely; we see in the column name 'pos' the representation of the mean activation of each latent zi as a function of all 32x32 location averaged across objects, rotations and scales. Since this representation is disentangled, we should see activations in the column of positions and no interaction in the scale and rotation columns. Likewise, z3 and z6 show the mean activation as a function of roration averaged across rotations and scale, whereas the row z6 shows the mean activation as a function of the scale averaged across rotations and positions. The three coloured lines in the scale and rotation columns are related to the objects "square, ellipse, heart". In the position column, the red colour represents higher values. The latent z7 is non-informative.
+
+<p align="center">
+<img src=misc/latents.png>
+</p>
+
+In addition, we plot the latent traversal for the original VAE [1] just to showcase the differences of having a disentangled representation. On the left, you can see clearly that most that model didn't disentangle any of ground truth factors, since each of the latents has information about more than one factors. On the left, we see the mean activations which again represent clearly that most of the latents have information about position, scale and rotation.
+
 <p align="center">
 <img src=misc/latents.png>
 </p>
 
 #### Plots of losses of first 4k steps
+
+We plot the Reconstruction loss, the KL loss and the synergy loss for the first 4000 steps.
+
 <p align="center">
 <img src=misc/plots.png>
 </p>
+
+#### Latent space Traverse of CelebA
+
+
+
+### References
+
+[1] D. P. Kingma and M. Welling. Auto-encoding variational bayes. ICLR, 2014.
 
