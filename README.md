@@ -81,7 +81,7 @@ We compare our model with Factor VAE. On the left, we show the latent traversals
 In addition, we plot the latent traversal for the original VAE [1] just to showcase the differences of having a disentangled representation. On the left, you can see clearly that most that model didn't disentangle any of ground truth factors, since each of the latents has information about more than one factors. On the left, we see the mean activations which again represent clearly that most of the latents have information about position, scale and rotation.
 
 <p align="center">
-<img src=misc/latents.png>
+<img src=misc/VAE_traversals.png>
 </p>
 
 #### Plots of losses of first 4k steps
@@ -94,7 +94,11 @@ We plot the Reconstruction loss, the KL loss and the synergy loss for the first 
 
 #### Latent space Traverse of CelebA
 
+We show below the trasverse of latents for the dataset CelebA ( http://mmlab.ie.cuhk.edu.hk/projects/CelebA.html ) using the same procedure as for the dsprites dataset. In terms of implementation, the difference between this CelebA and dsprites was that for the latter we used a Cross-Entropy loss for the reconstruction term whereas for the former one we used a Mean Square Error Loss. 
 
+<p align="center">
+<img src=misc/faces_celelba.png>
+</p>
 
 ### References
 
