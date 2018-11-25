@@ -58,8 +58,6 @@ class VAE_faces(nn.Module):
 
     def forward(self, x, decode = True):
 
-        print(x.size())
-
         params = self.encoder(x)
         mu = params[:, :self.z_dim]
         logvar = params[:, self.z_dim:]
