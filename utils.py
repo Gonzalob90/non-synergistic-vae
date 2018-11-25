@@ -199,7 +199,7 @@ def traverse_faces(train_model, model, test_imgs, save_path):
         # retrieve the recons
         recons = model.decoder(temp_latents)
         recons1 = F.sigmoid(recons).data
-        recons1_p = recons1.unsqueeze(1) * 255
+        recons1_p = recons1.unsqueeze(1)
         #print("recons{}".format(recons[1,0,:5,:5]))
         #print("canvas before {}".format(canvas[1,:,:5,:5]))
         canvas = torch.cat((canvas, recons1_p), dim=1)
