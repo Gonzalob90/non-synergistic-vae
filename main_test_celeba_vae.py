@@ -71,7 +71,7 @@ class Trainer1F_celeba_VAE():
                 # VAE
                 #x_true1 = x_true1.unsqueeze(1).to(self.device)
                 x_true1 = x_true1.to(self.device)
-                #print(x_true1.size())
+                print(x_true1.size())
                 #print()
 
                 # x_true1 are between 0 and 1.
