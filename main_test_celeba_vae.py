@@ -78,7 +78,7 @@ class Trainer1F_celeba_VAE():
                 x_recon, mu, logvar, z = self.VAE(x_true1)
                 # Reconstruction and KL
 
-                vae_recon_loss = recon_loss(x_true1, x_recon)
+                vae_recon_loss = recon_loss_faces(x_true1, x_recon)
                 vae_kl = kl_div(mu, logvar)
 
                 # VAE loss
