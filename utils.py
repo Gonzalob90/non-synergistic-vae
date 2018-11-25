@@ -160,7 +160,9 @@ def traverse_faces(train_model, model, test_imgs, save_path):
     #print("x1 size {}".format(x1.size()))
     #print("z size {}".format(z.size()))
 
+    import pdb; pdb.set_trace()
     x1_p = x1.unsqueeze(1)
+     
     test_imgs_p = test_imgs.unsqueeze(1)
     #print(x1_p.size())
     #print(test_imgs_p.size())
@@ -198,7 +200,7 @@ def traverse_faces(train_model, model, test_imgs, save_path):
         # retrieve the recons
         recons = model.decoder(temp_latents)
         recons1 = F.sigmoid(recons).data
-        recons1_p = recons1.unsqueeze(1)
+        recons1_p = recons1.unsqueeze(1) * 255
         #print("recons{}".format(recons[1,0,:5,:5]))
         #print("canvas before {}".format(canvas[1,:,:5,:5]))
         canvas = torch.cat((canvas, recons1_p), dim=1)
@@ -211,6 +213,7 @@ def traverse_faces(train_model, model, test_imgs, save_path):
     #print("img size {}".format(img_size))
     canvas = canvas.transpose(0, 1).contiguous().view(-1, *img_size)
     #print("final canvas size {}".format(canvas.size()))
+
     save_image(canvas, save_path, nrow=num_colums, pad_value=1)
 
     train_model(train=True)
