@@ -160,9 +160,8 @@ def traverse_faces(train_model, model, test_imgs, save_path):
     #print("x1 size {}".format(x1.size()))
     #print("z size {}".format(z.size()))
 
-    import pdb; pdb.set_trace()
     x1_p = x1.unsqueeze(1)
-     
+
     test_imgs_p = test_imgs.unsqueeze(1)
     #print(x1_p.size())
     #print(test_imgs_p.size())
