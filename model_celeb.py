@@ -31,7 +31,7 @@ class VAE_faces(nn.Module):
             nn.ReLU(),
             Flatten(),
             nn.Linear(64 * 4 * 4, 256),
-            nn.ReLU(),
+            #nn.ReLU(),
             nn.Linear(256, 2 * z_dim)
         )
 
