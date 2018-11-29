@@ -15,7 +15,7 @@ from test import I_max_batch, e_greedy_policy_Smax_discount, greedy_policy_Smax_
 
 torch.set_printoptions(precision=6)
 
-class Trainer1F_celeba_VAE():
+class Trainer1F_celeba_factorVAE():
 
     def __init__(self, args, dataloader, device, test_imgs):
 
