@@ -106,6 +106,7 @@ class Trainer1F_celeba_factorVAE():
                 self.optim_VAE.step() #Does the step
 
                 # Discriminator
+                import pdb; pdb.set_trace()
                 x_true2 = x_true2.to(self.device)
                 z_prime = self.VAE(x_true2, decode=False)[3]
                 z_perm = permute_dims(
