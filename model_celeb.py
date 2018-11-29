@@ -13,6 +13,28 @@ class Reshape(nn.Module):
     def forward(self, x):
         return x.view(self.shape)
 
+class Discriminator(nn.Module):
+    def __init__(self, num_latents):
+        super(Discriminator, self).__init__()
+
+        self.num_latents = num_latents
+
+        self.net = nn.Sequential(
+            nn.Linear(num_latents, 1000),
+            nn.LeakyReLU(),
+            nn.Linear(1000, 1000),
+            nn.LeakyReLU(),
+            nn.Linear(1000, 1000),
+            nn.LeakyReLU(),
+            nn.Linear(1000, 1000),
+            nn.LeakyReLU(),
+            nn.Linear(1000, 1000),
+            nn.LeakyReLU(),
+            nn.Linear(1000, 2)
+            )
+    def forward(self, z):
+        return self.net(z).squeeze()
+
 
 class VAE_faces(nn.Module):
     def __init__(self, z_dim):
@@ -31,15 +53,15 @@ class VAE_faces(nn.Module):
             nn.ReLU(),
             Flatten(),
             nn.Linear(64 * 4 * 4, 256),
-            #nn.ReLU(),
+            nn.ReLU(),
             nn.Linear(256, 2 * z_dim)
         )
 
         self.decoder = nn.Sequential(
             nn.Linear(z_dim, 256),
-            #nn.ReLU(),
+            nn.ReLU(),
             nn.Linear(256, 64 * 4 * 4),
-            #nn.ReLU(),
+            nn.ReLU(),
             Reshape(-1, 64, 4, 4),
             nn.ConvTranspose2d(64, 64, 4, 2, 1),
             nn.ReLU(),
