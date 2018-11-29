@@ -61,8 +61,7 @@ class Trainer1F_celeba_factorVAE():
 
         self.net_mode(train=True)
 
-        ones = torch.ones(self.batch_size, dtype=torch.long, device=self.device)
-        zeros = torch.zeros(self.batch_size, dtype=torch.long, device=self.device)
+
 
         epochs = int(np.ceil(self.steps)/len(self.dataloader))
         print("number of epochs {}".format(epochs))
@@ -81,6 +80,7 @@ class Trainer1F_celeba_factorVAE():
                 # VAE
                 #x_true1 = x_true1.unsqueeze(1).to(self.device)
                 x_true1 = x_true1.to(self.device)
+
                 #(64,64,64)
                 #print()
 
@@ -106,7 +106,9 @@ class Trainer1F_celeba_factorVAE():
                 self.optim_VAE.step() #Does the step
 
                 # Discriminator
-                import pdb; pdb.set_trace()
+                ones = torch.ones(x_true1.size()[0], dtype=torch.long, device=self.device)
+                zeros = torch.zeros(x_true1.size()[0], dtype=torch.long, device=self.device)
+
                 x_true2 = x_true2.to(self.device)
                 z_prime = self.VAE(x_true2, decode=False)[3]
                 z_perm = permute_dims(
