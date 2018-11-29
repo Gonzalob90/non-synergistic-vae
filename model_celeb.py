@@ -37,9 +37,9 @@ class VAE_faces(nn.Module):
 
         self.decoder = nn.Sequential(
             nn.Linear(z_dim, 256),
-            nn.ReLU(),
+            #nn.ReLU(),
             nn.Linear(256, 64 * 4 * 4),
-            nn.ReLU(),
+            #nn.ReLU(),
             Reshape(-1, 64, 4, 4),
             nn.ConvTranspose2d(64, 64, 4, 2, 1),
             nn.ReLU(),
