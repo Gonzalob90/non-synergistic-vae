@@ -183,7 +183,7 @@ def main():
         net = Trainer_BVAE(args, dataloader, device, test_imgs, dataloader_gt)
         net.train()
 
-    if args.metric == "Test1":
+    if args.metric == "Celeba_faces_1F":
 
         net = Trainer1F_celeba(args, dataloader, device, test_imgs)
         net.train()
