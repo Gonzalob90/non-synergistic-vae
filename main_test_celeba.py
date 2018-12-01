@@ -110,17 +110,10 @@ class Trainer1F_celeba():
                 # Step 1: compute the argmax of D kl (q(ai | x(i)) || )
                 if self.args.policy == "greedy":
                     best_ai, worst_ai = greedy_policy_Smax_discount_worst(self.z_dim, mu_prime, logvar_prime,alpha=self.omega)
-                    #print("step {}, latents best {}".format(step, best_ai))
-                    #print("step {}, latents worst{}".format(step, worst_ai))
+
 
                     c.update(best_ai)
                     d.update(worst_ai)
-
-                #if self.args.policy == "e-greedy":
-                #    best_ai, worst_ai = e_greedy_policy_Smax_discount(self.z_dim, mu_prime, logvar_prime, alpha=self.omega, epsilon=self.epsilon)
-                #    #print("step {}, latents {}".format(step, best_ai))
-                #    c.update(best_ai)
-                #    d.update(worst_ai)
 
                 # Step 2: compute the Imax
                 mu_syn = mu_prime[:, worst_ai]
@@ -132,71 +125,18 @@ class Trainer1F_celeba():
                 else:
 
                     I_max = kl_div(mu_syn, logvar_syn)
-                    #print("I max {}".format(I_max))
-                    #I_max_dim = kl_div_uni_dim(mu_syn, logvar_syn).sum(1).mean()
-                    #print("I max dim {}".format(I_max_dim))
 
                 # Step 3: Use it in the loss
 
                 # IN THIS CASE ALPHA SHOULD BE GREATER THAN 0, SOMETHING LIKE 2-4.
                 syn_loss = self.alpha * I_max
 
-                """
-                print()
-                print("WEIGHTS BEFORE UPDATE STEP {}".format(step))
-                print("encoder.2.weight {}".format(self.optim_VAE.param_groups[0]['params'][2][0, 0, :, :]))
-                print("mu weights")
-                print("encoder.10.weight first 10 samples {}".format(
-                    self.optim_VAE.param_groups[0]['params'][10][:10, :10]))
-                print()
-                print("logvar weights")
-                print("encoder.10.weight first 10 samples {}".format(
-                    self.optim_VAE.param_groups[0]['params'][10][10:, :10]))
-                """
-
                 # Step 4: Optimise Syn term
                 self.optim_VAE.zero_grad() # set zeros all the gradients of VAE network
                 syn_loss.backward() #backprop the gradients
 
-                """
-                print("GRADS")
-
-                for name, params in self.VAE.named_parameters():
-                    # if name == 'encoder.2.weight':
-                    # size : 32,32,4,4
-                    # print("name {}, params grad {}".format(name, params.grad[0, 0, :, :]))
-
-                    if name == 'encoder.10.weight':
-                        # size : 32,32,4,4
-                        #print(Smax[:10])
-
-                        print()
-                        # print("params grad {}".format(params.grad[1, :10]))
-                        print()
-                        print("mu gradients name {}".format(name))
-                        print(params.grad[:10, :10])
-                        print()
-                        print("logvar gradients name {}".format(name))
-                        print(params.grad[10:, :10])
-
-                """
-
 
                 self.optim_VAE.step() #Does the update in VAE network parameters
-
-                """
-                print()
-                print("WEIGHTS AFTER UPDATE STEP {}".format(step))
-                print("encoder.2.weight {}".format(self.optim_VAE.param_groups[0]['params'][2][0,0,:,:]))
-                print("mu weights")
-                print("encoder.10.weight first 10 samples {}".format(
-                    self.optim_VAE.param_groups[0]['params'][10][:10, :10]))
-                print()
-                print("logvar weights")
-                print("encoder.10.weight first 10 samples {}".format(
-                    self.optim_VAE.param_groups[0]['params'][10][10:, :10]))
-                """
-
 
                 # Logging
                 if step % self.args.log_interval == 0:
