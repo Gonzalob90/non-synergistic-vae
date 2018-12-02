@@ -59,9 +59,9 @@ def I_max_batch_mean(index, mu, logvar):
 def generate_candidate(z_dim, best_c):
 
     if len(best_c) == 0:
-        index = [i for i in range(0,10)]
+        index = [i for i in range(0,z_dim)]
     else:
-        index = [i for i in range(0,10) if i not in best_c]
+        index = [i for i in range(0,z_dim) if i not in best_c]
 
     return index
 
@@ -190,7 +190,7 @@ def greedy_policy_Smax_discount_worst(z_dim, mu, logvar, alpha):
 
         best_index = best_c
         #print(best_index)
-    worst_index = [i for i in range(0,10) if i not in best_index]
+    worst_index = [i for i in range(0,z_dim) if i not in best_index]
 
 
     return best_index, worst_index
