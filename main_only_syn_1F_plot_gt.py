@@ -43,8 +43,6 @@ class Trainer1F_gt():
         self.optim_VAE = optim.Adam(self.VAE.parameters(), lr=self.lr_VAE,
                                     betas=(self.beta1_VAE, self.beta2_VAE))
 
-        #self.optim_VAE = optim.SGD(self.VAE.parameters(), lr=1.0)
-
         self.alpha = args.alpha
         self.omega = args.omega
         self.epsilon = args.epsilon
@@ -63,7 +61,6 @@ class Trainer1F_gt():
         d = Counter()
 
         for e in range(epochs):
-        #for e in range():
 
             for x_true1, x_true2 in self.dataloader:
 
@@ -72,11 +69,9 @@ class Trainer1F_gt():
 
                 # VAE
                 x_true1 = x_true1.unsqueeze(1).to(self.device)
-
                 x_recon, mu, logvar, z = self.VAE(x_true1)
 
                 # Reconstruction and KL
-
                 vae_recon_loss = recon_loss(x_true1, x_recon)
                 vae_kl = kl_div(mu, logvar)
 
