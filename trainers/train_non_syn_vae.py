@@ -5,14 +5,13 @@ import torch
 import torch.optim as optim
 import os
 
-from ops import recon_loss, kl_div, permute_dims, kl_div_uni_dim
+from ops import recon_loss, kl_div, kl_div_uni_dim
 from utils import traverse
 from model import VAE
 from test_plot_gt import plot_gt_shapes
 
 from test import greedy_policy_Smax_discount_worst
 from test_MIG import mutual_info_metric_shapes
-
 torch.set_printoptions(precision=6)
 
 
