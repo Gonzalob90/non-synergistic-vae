@@ -3,7 +3,7 @@ import torch
 import random
 from random import choice
 
-from ops import kl_div_syn, kl_div, kl_div_uni_dim, kl_div_mean
+from utils.ops import kl_div_syn, kl_div, kl_div_uni_dim, kl_div_mean
 
 # Lets going to try two different experiments: one per batch, one per sample
 

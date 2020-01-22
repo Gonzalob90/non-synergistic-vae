@@ -69,10 +69,7 @@ class Trainer1F_celeba_VAE():
                 step += 1
 
                 # VAE
-                #x_true1 = x_true1.unsqueeze(1).to(self.device)
                 x_true1 = x_true1.to(self.device)
-                #(64,64,64)
-                #print()
 
                 # x_true1 are between 0 and 1.
                 x_recon, mu, logvar, z = self.VAE(x_true1)
@@ -103,17 +100,7 @@ class Trainer1F_celeba_VAE():
                     print("Recons. Loss = " + "{:.4f}".format(vae_recon_loss))
                     print("KL Loss = " + "{:.4f}".format(vae_kl))
                     print("VAE Loss = " + "{:.4f}".format(vae_loss))
-                    #print("best_ai {}".format(best_ai))
-                    #print("worst_ai {}".format(worst_ai))
-                    #print("I_max {}".format(I_max))
-                    #print("Syn loss {:.4f}".format(syn_loss))
-                    #print()
-                    #for k, v in O.items():
-                    #    print("best latent {}: {}".format(k, v))
-                    #print()
-                    #for k, v in P.items():
-                    #    print("worst latent {}: {}".format(k, v))
-                    #print()
+
 
                 # Saving
                 if not step % self.args.save_interval:

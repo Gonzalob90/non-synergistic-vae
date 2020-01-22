@@ -12,6 +12,11 @@ plt.style.use('ggplot')
 
 VAR_THRESHOLD = 1e-2
 
+init_seed = 40
+torch.manual_seed(init_seed)
+torch.cuda.manual_seed(init_seed)
+torch.cuda.manual_seed_all(init_seed)
+
 def plot_gt_shapes(train_model, model, dataloder_gt, save_path):
 
     train_model(train=False)

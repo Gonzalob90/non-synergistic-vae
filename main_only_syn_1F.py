@@ -6,8 +6,8 @@ import torch.nn.functional as F
 import torch.optim as optim
 import os
 
-from ops import recon_loss, kl_div, permute_dims, kl_div_uni_dim
-from utils import traverse
+from utils.ops import recon_loss, kl_div, permute_dims, kl_div_uni_dim
+from utils.utils import traverse
 from model import VAE
 
 from test import I_max_batch, e_greedy_policy_Smax_discount, greedy_policy_Smax_discount_worst
@@ -41,8 +41,6 @@ class Trainer1F():
         self.optim_VAE = optim.Adam(self.VAE.parameters(), lr=self.lr_VAE,
                                     betas=(self.beta1_VAE, self.beta2_VAE))
 
-        #self.optim_VAE = optim.SGD(self.VAE.parameters(), lr=1.0)
-
         self.alpha = args.alpha
         self.omega = args.omega
         self.epsilon = args.epsilon
@@ -61,7 +59,6 @@ class Trainer1F():
         d = Counter()
 
         for e in range(epochs):
-        #for e in range():
 
             for x_true1, x_true2 in self.dataloader:
 

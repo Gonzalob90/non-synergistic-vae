@@ -39,7 +39,6 @@ class VAE_MLP(nn.Module):
 
         if decode:
             x_recon = self.decoder(z)
-            #print("x_recon size {}".format(x_recon.size()))
         else:
             x_recon = None
 

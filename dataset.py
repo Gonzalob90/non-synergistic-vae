@@ -3,7 +3,7 @@ from torch.utils.data import Dataset, DataLoader
 from PIL import Image
 import zipfile
 
-DSPRITES_PATH = 'dsprites_ndarray_co1sh3sc6or40x32y32_64x64.npz'
+DSPRITES_PATH = 'datasets/dsprites_ndarray_co1sh3sc6or40x32y32_64x64.npz'
 CELEBA_PATH = 'img_align_celeba.zip'
 NUM_EXAMPLES_CELEBA = 202599
 #NUM_EXAMPLES_CELEBA = 5000
@@ -26,6 +26,7 @@ class SpritesDataset(Dataset):
 def get_dsprites_dataloader(batch_size, shuffle=True):
     sprite_dataset = SpritesDataset()
     return DataLoader(sprite_dataset, batch_size=batch_size, shuffle=shuffle)
+
 
 def get_dsprites_dataloader_gt(batch_size, shuffle=False):
     sprite_dataset = SpritesDataset()
