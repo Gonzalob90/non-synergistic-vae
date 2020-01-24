@@ -6,7 +6,7 @@ import zipfile
 DSPRITES_PATH = 'datasets/dsprites_ndarray_co1sh3sc6or40x32y32_64x64.npz'
 CELEBA_PATH = 'img_align_celeba.zip'
 NUM_EXAMPLES_CELEBA = 202599
-#NUM_EXAMPLES_CELEBA = 5000
+
 
 class SpritesDataset(Dataset):
     def __init__(self):
