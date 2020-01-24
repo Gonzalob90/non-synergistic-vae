@@ -12,7 +12,7 @@ plt.style.use('ggplot')
 
 VAR_THRESHOLD = 1e-2
 
-init_seed = 40
+init_seed = 120
 torch.manual_seed(init_seed)
 torch.cuda.manual_seed(init_seed)
 torch.cuda.manual_seed_all(init_seed)
