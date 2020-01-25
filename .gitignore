@@ -5,4 +5,5 @@ trainers/__pycache__/
 utils/__pycache__/
 __pycache__/*
 results/
-previous_exp/*
+previous_exp/
+test/
