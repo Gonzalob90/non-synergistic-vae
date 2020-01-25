@@ -6,12 +6,10 @@ import torch.nn.functional as F
 import torch.optim as optim
 import os
 
-from ops import recon_loss, kl_div, permute_dims, kl_div_uni_dim, recon_loss_faces
-from utils import traverse_faces
+from utils.ops import recon_loss, kl_div, permute_dims, kl_div_uni_dim, recon_loss_faces
+from utils.utils import traverse_faces
 from model_celeb import VAE_faces, Discriminator
-
 from test import I_max_batch, e_greedy_policy_Smax_discount, greedy_policy_Smax_discount_worst
-
 
 torch.set_printoptions(precision=6)
 
@@ -127,31 +125,12 @@ class Trainer1F_celeba_factorVAE():
 
                 # Logging
                 if step % self.args.log_interval == 0:
-
-                    #O = OrderedDict(
-                    #    [(i, str(round(count / sum(c.values()) * 100.0, 3)) + '%') for i, count in c.most_common()])
-
-                    #P = OrderedDict(
-                    #    [(i, str(round(count / sum(d.values()) * 100.0, 3)) + '%') for i, count in d.most_common()])
-
                     print("Step {}".format(step))
                     print("Recons. Loss = " + "{:.4f}".format(vae_recon_loss))
                     print("KL Loss = " + "{:.4f}".format(vae_kl))
                     print("TC Loss = " + "{:.4f}".format(tc_loss))
                     print("Factor VAE Loss = " + "{:.4f}".format(vae_loss))
                     print("D loss = " + "{:.4f}".format(d_loss))
-
-                    #print("best_ai {}".format(best_ai))
-                    #print("worst_ai {}".format(worst_ai))
-                    #print("I_max {}".format(I_max))
-                    #print("Syn loss {:.4f}".format(syn_loss))
-                    #print()
-                    #for k, v in O.items():
-                    #    print("best latent {}: {}".format(k, v))
-                    #print()
-                    #for k, v in P.items():
-                    #    print("worst latent {}: {}".format(k, v))
-                    #print()
 
                 # Saving
                 if not step % self.args.save_interval:

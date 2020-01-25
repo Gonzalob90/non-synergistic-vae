@@ -8,10 +8,9 @@ import os
 from utils.ops import recon_loss, kl_div, kl_div_uni_dim
 from utils.utils import traverse
 from models.model_vae import VAE
-from test_plot_gt import plot_gt_shapes
+from utils.plots import plot_gt_shapes
 
-from test import greedy_policy_Smax_discount_worst
-from test_MIG import mutual_info_metric_shapes
+from utils.syn_ops import greedy_policy_s_max_discount_worst
 torch.set_printoptions(precision=6)
 
 
@@ -90,7 +89,7 @@ class TrainerNonSynVAE:
                 # Synergy Max
 
                 # Step 1: compute the arg-max of D kl (q(ai | x(i)) || ) in a greedy way.
-                best_ai, worst_ai = greedy_policy_Smax_discount_worst(self.z_dim, mu_prime, log_var_prime,
+                best_ai, worst_ai = greedy_policy_s_max_discount_worst(self.z_dim, mu_prime, log_var_prime,
                                                                       alpha=self.omega)
                 c.update(best_ai)
                 d.update(worst_ai)

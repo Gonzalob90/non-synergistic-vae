@@ -1,4 +1,3 @@
-import numpy as np
 import torch
 from torch.nn import functional as F
 from torchvision.utils import save_image
@@ -18,7 +17,6 @@ class DataGather(object):
 
     def flush(self):
         self.data = self.get_empty_data_dict()
-
 
 
 def traverse(train_model, model, test_imgs, save_path):
@@ -57,7 +55,6 @@ def traverse(train_model, model, test_imgs, save_path):
 
 
 def traverse_mlp(train_model, model, test_imgs, save_path):
-
 
     train_model(train=False)
 

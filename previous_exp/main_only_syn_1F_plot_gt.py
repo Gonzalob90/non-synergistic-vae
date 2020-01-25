@@ -6,8 +6,8 @@ import torch.nn.functional as F
 import torch.optim as optim
 import os
 
-from ops import recon_loss, kl_div, permute_dims, kl_div_uni_dim
-from utils import traverse
+from utils.ops import recon_loss, kl_div, permute_dims, kl_div_uni_dim
+from utils.utils import traverse
 from model import VAE
 from test_plot_gt import plot_gt_shapes
 

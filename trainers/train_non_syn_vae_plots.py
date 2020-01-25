@@ -6,11 +6,10 @@ import torch
 import torch.optim as optim
 import os
 
-from ops import recon_loss, kl_div, kl_div_uni_dim
-from utils import traverse, DataGather
-from model import VAE
-
-from test import greedy_policy_Smax_discount_worst
+from utils.ops import recon_loss, kl_div, kl_div_uni_dim
+from utils.utils import traverse, DataGather
+from models.model_vae import VAE
+from utils.syn_ops import greedy_policy_s_max_discount_worst
 torch.set_printoptions(precision=6)
 
 
@@ -102,7 +101,7 @@ class TrainerNonSynVAEPlots:
 
                 # Optimise VAE
                 self.optim_VAE.zero_grad()
-                vae_loss.backward(retain_graph = True) # grad parameters are populated
+                vae_loss.backward(retain_graph=True)  # grad parameters are populated
                 self.optim_VAE.step()
 
                 # Sampling
@@ -116,11 +115,11 @@ class TrainerNonSynVAEPlots:
                     mu_prime = mu
                     log_var_prime = log_var
 
-                #Synergy Max
+                # Synergy Max
 
                 # Step 1: compute the arg-max of D kl (q(ai | x(i)) || )
-                best_ai, worst_ai = greedy_policy_Smax_discount_worst(self.z_dim, mu_prime, log_var_prime,
-                                                                      alpha=self.omega)
+                best_ai, worst_ai = greedy_policy_s_max_discount_worst(self.z_dim, mu_prime, log_var_prime,
+                                                                       alpha=self.omega)
                 c.update(best_ai)
                 d.update(worst_ai)
 

@@ -6,23 +6,10 @@ import torch
 import numpy as np
 
 from trainers.train_non_syn_vae import TrainerNonSynVAE
-
-# from main_only_syn_1F import Trainer1F
-# from main_only_syn_1F_MLP import Trainer1F_MLP
-# from test_1F_graphs import Trainer1F_test
-# from main_BVAE_MLP import Trainer_BVAE
-# from main_test_celeba import Trainer1F_celeba
-# from main_only_syn_1F_plot_gt import Trainer1F_gt
-# from main_VAE import Trainer_VAE
-# from main_VAE_plot_gt import Trainer_VAE_gt
-# from main_factor import Trainer_Factor
-# from main_BVAE_plot_gt import Trainer_BVAE_gt
-# from main_only_syn_1F_metric_factor import Trainer1F_metricFactor
-# from main_BVAE_capacity import Trainer_BVAE_capacity
-# from main_test_celeba_vae import Trainer1F_celeba_VAE
-# from main_test_celeba_factor import Trainer1F_celeba_factorVAE
-
-from dataset import get_dsprites_dataloader, get_celeba_dataloader, get_celeba_dataloader_gpu, get_dsprites_dataloader_gt
+from trainers.train_non_syn_vae_plots import TrainerNonSynVAEPlots
+from trainers.trainer_non_syn_vae_celeba import TrainerNonSynVAECelebA
+from dataset import get_dsprites_dataloader, get_celeba_dataloader, get_celeba_dataloader_gpu, \
+    get_dsprites_dataloader_gt
 
 DATASETS = {'dsprites': [(1, 64, 64), get_dsprites_dataloader],
             'celeba_1': [(3, 64, 64), get_celeba_dataloader],
@@ -35,7 +22,6 @@ def _get_dataset(data_arg):
     if data_arg not in DATASETS:
         raise ValueError("Dataset not available!")
     return DATASETS[data_arg]
-
 
 
 def parse():
@@ -108,7 +94,7 @@ def main():
     #device
     use_cuda = not args.no_cuda and torch.cuda.is_available()
     device = torch.device('cuda' if use_cuda else 'cpu')
-    print(device)
+    print(f'Using {device}')
 
     # data loader
     img_dims, dataloader = _get_dataset(args.dataset)
@@ -119,8 +105,8 @@ def main():
 
     # test images to reconstruct during training
     dataset_size = len(dataloader.dataset)
-    print(dataset_size)
-    indices = np.hstack((0, np.random.choice(range(1,dataset_size),args.nb_test - 1)))
+    print(f'Number of examples in dataset: {dataset_size}')
+    indices = np.hstack((0, np.random.choice(range(1, dataset_size), args.nb_test - 1)))
     test_imgs = torch.empty(args.nb_test, *img_dims).to(device)
 
     for i, img_idx in enumerate(indices):
@@ -130,75 +116,13 @@ def main():
     if os.path.isdir(args.output_dir): shutil.rmtree(args.output_dir)
     os.makedirs(args.output_dir)
 
-    # if args.metric == "1F":
-    #
-    #     net = Trainer1F(args, dataloader, device, test_imgs)
-    #     net.train()
-    #
-    # if args.metric == "1F_MLP":
-    #
-    #     net = Trainer1F_MLP(args, dataloader, device, test_imgs)
-    #     net.train()
-    #
-    # if args.metric == "test":
-    #
-    #     net = Trainer1F_test(args, dataloader, device, test_imgs)
-    #     net.train()
-    #
-    # if args.metric == "BVAE":
-    #
-    #     net = Trainer_BVAE(args, dataloader, device, test_imgs, dataloader_gt)
-    #     net.train()
-    #
-    # if args.metric == "Celeba_faces_1F":
-    #
-    #     net = Trainer1F_celeba(args, dataloader, device, test_imgs)
-    #     net.train()
-    #
-    # if args.metric == "Test_gt":
-    #
-    #     net = Trainer1F_gt(args, dataloader, device, test_imgs, dataloader_gt)
-    #     net.train()
-    #
-    # if args.metric == "VAE":
-    #
-    #     net = Trainer_VAE(args, dataloader, device, test_imgs, dataloader_gt)
-    #     net.train()
-    #
-    # if args.metric == "VAE_gt":
-    #
-    #     net = Trainer_VAE_gt(args, dataloader, device, test_imgs, dataloader_gt)
-    #     net.train()
-    #
-    # if args.metric == "Factor":
-    #
-    #     net = Trainer_Factor(args, dataloader, device, test_imgs, dataloader_gt)
-    #     net.train()
-    #
-    # if args.metric == "BVAE_gt":
-    #
-    #     net = Trainer_BVAE_gt(args, dataloader, device, test_imgs, dataloader_gt)
-    #     net.train()
-    #
-    # if args.metric == "test_metric":
-    #
-    #     net = Trainer1F_metricFactor(args, dataloader, device, test_imgs, dataloader_gt)
-    #     net.train()
-    #
-    # if args.metric == "BVAE_capacity":
-    #
-    #     net = Trainer_BVAE_capacity(args, dataloader, device, test_imgs, dataloader_gt)
-    #     net.train()
-    #
-    # if args.metric == "Celeba_faces":
-    #     net = Trainer1F_celeba_VAE(args, dataloader, device, test_imgs)
-    #     net.train()
-    #
-    # if args.metric == "Celeba_faces_factor":
-    #     net = Trainer1F_celeba_factorVAE(args, dataloader, device, test_imgs)
-    #     net.train()
-
-    if args.metric == 'refactor':
+    if args.plots == True:
+        net = TrainerNonSynVAEPlots(args, dataloader, device, test_imgs, dataloader_gt)
+        net.train()
+    elif args.dataset == 'celeba':
+        net = TrainerNonSynVAE(args, dataloader, device, test_imgs, dataloader_gt)
+        net.train()
+    else:
         net = TrainerNonSynVAE(args, dataloader, device, test_imgs, dataloader_gt)
         net.train()
 

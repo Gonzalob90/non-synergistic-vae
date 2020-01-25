@@ -3,10 +3,10 @@ import torch
 import torch.optim as optim
 import os
 
-from ops import recon_loss, kl_div, permute_dims, kl_div_uni_dim
-from utils import traverse
-from model import VAE
-from test_plot_gt import plot_gt_shapes
+from utils.ops import recon_loss, kl_div, permute_dims, kl_div_uni_dim
+from utils.utils import traverse
+from models.model_vae import VAE
+from utils.plots import plot_gt_shapes
 
 torch.set_printoptions(precision=6)
 
