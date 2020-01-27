@@ -5,29 +5,11 @@ import shutil
 import torch
 import numpy as np
 
-from main_syn_1A import Trainer1A
-from main_only_syn_1B import Trainer1B
-from main_only_syn_1C import Trainer1C
-from main_only_syn_1D import Trainer1D
-from main_only_syn_1B_MLP import Trainer1B_MLP
-from main_only_syn_1E import Trainer1E
-from main_only_syn_1E_MLP import Trainer1E_MLP
-from main_only_syn_1F import Trainer1F
-from main_only_syn_1F_MLP import Trainer1F_MLP
-from test_1F_graphs import Trainer1F_test
-from main_BVAE_MLP import Trainer_BVAE
-from main_test_celeba import Trainer1F_celeba
-from main_only_syn_1F_plot_gt import  Trainer1F_gt
-from main_VAE import Trainer_VAE
-from main_VAE_plot_gt import Trainer_VAE_gt
-from main_factor import Trainer_Factor
-from main_BVAE_plot_gt import Trainer_BVAE_gt
-from main_only_syn_1F_metric_factor import Trainer1F_metricFactor
-from main_BVAE_capacity import Trainer_BVAE_capacity
-from main_test_celeba_vae import Trainer1F_celeba_VAE
-from main_test_celeba_factor import Trainer1F_celeba_factorVAE
-
-from dataset import get_dsprites_dataloader, get_celeba_dataloader, get_celeba_dataloader_gpu, get_dsprites_dataloader_gt
+from trainers.train_non_syn_vae import TrainerNonSynVAE
+from trainers.train_non_syn_vae_plots import TrainerNonSynVAEPlots
+from trainers.trainer_non_syn_vae_celeba import TrainerNonSynVAECelebA
+from dataset import get_dsprites_dataloader, get_celeba_dataloader, get_celeba_dataloader_gpu, \
+    get_dsprites_dataloader_gt
 
 DATASETS = {'dsprites': [(1, 64, 64), get_dsprites_dataloader],
             'celeba_1': [(3, 64, 64), get_celeba_dataloader],
@@ -41,10 +23,6 @@ def _get_dataset(data_arg):
         raise ValueError("Dataset not available!")
     return DATASETS[data_arg]
 
-init_seed = 1
-torch.manual_seed(init_seed)
-torch.cuda.manual_seed(init_seed)
-np.random.seed(init_seed)
 
 def parse():
     parser = argparse.ArgumentParser(description='Factor-VAE')
@@ -56,7 +34,6 @@ def parse():
     parser.add_argument('--omega', default=0.8, type=float, help='coefficient of the greedy policy')
 
     # Synergy
-    parser.add_argument('--metric', default='1B', type=str, help="Synergy metrics")
     parser.add_argument('--policy', default='greedy', type=str, help="policy to use for the Synergy metric")
     parser.add_argument('--epsilon', default=0.05, type=float, help='exploration trade-off for e-greedy policy')
     parser.add_argument('--sample', default='no_sample', type=str, help="sample new values of logvar and mu for the Syn term")
@@ -76,11 +53,14 @@ def parse():
     parser.add_argument('--batch_size', default=64, type=int, help='number of batches')
     parser.add_argument('--steps', default=3e5, type=float, help='steps to train')
 
+    # Miscellaneous
     parser.add_argument('--dataset', default='dsprites', type=str, help="dataset to use")
     parser.add_argument('--output_dir', default='outputs', type=str, help='output directory')
     parser.add_argument('--no-cuda', action='store_true', default=False)
     parser.add_argument('--nb-test', type=int, default=9, help='number of test samples to visualize the recons of')
     parser.add_argument('--seed', type=int, default=1)
+
+    # Intervals
     parser.add_argument('--log-interval', type=int, default=500)
     parser.add_argument('--plot-interval', type=int, default=500)
     parser.add_argument('--save-interval', type=int, default=2000)
@@ -89,7 +69,7 @@ def parse():
     parser.add_argument('--seq-interval', type=int, default=2000)
 
     # Visdom
-    parser.add_argument('--viz_on', default=True, help='enable visdom visualization')
+    parser.add_argument('--viz_on', default=False, help='enable visdom visualization')
     parser.add_argument('--viz_port', default=8097, type=int, help='visdom port number')
     parser.add_argument('--viz_il_iter', default=20, type=int, help='visdom line data logging iter')
     parser.add_argument('--viz_la_iter', default=100, type=int, help='visdom line data applying iter')
@@ -99,14 +79,24 @@ def parse():
 
 def main():
 
+    init_seed = 120
+    torch.manual_seed(init_seed)
+    torch.cuda.manual_seed(init_seed)
+    torch.cuda.manual_seed_all(init_seed)
+    np.random.seed(init_seed)
+
+    torch.backends.cudnn.deterministic = True
+    torch.backends.cudnn.benchmark = False
+
     args = parse()
 
     #device
     use_cuda = not args.no_cuda and torch.cuda.is_available()
     device = torch.device('cuda' if use_cuda else 'cpu')
-    print(device)
+    print(f'Using {device}')
 
     # data loader
+    print(f'Using dataset: {args.dataset}')
     img_dims, dataloader = _get_dataset(args.dataset)
     dataloader = dataloader(args.batch_size)
 
@@ -115,8 +105,8 @@ def main():
 
     # test images to reconstruct during training
     dataset_size = len(dataloader.dataset)
-    print(dataset_size)
-    indices = np.hstack((0, np.random.choice(range(1,dataset_size),args.nb_test - 1)))
+    print(f'Number of examples in dataset: {dataset_size}')
+    indices = np.hstack((0, np.random.choice(range(1, dataset_size), args.nb_test - 1)))
     test_imgs = torch.empty(args.nb_test, *img_dims).to(device)
 
     for i, img_idx in enumerate(indices):
@@ -126,110 +116,19 @@ def main():
     if os.path.isdir(args.output_dir): shutil.rmtree(args.output_dir)
     os.makedirs(args.output_dir)
 
-    # train
-    if args.metric == "1A":
-
-        net = Trainer1A(args, dataloader, device, test_imgs)
+    if args.viz_on:
+        net = TrainerNonSynVAEPlots(args, dataloader, device, test_imgs)
+        print('Training Non-Syn VAE, monitoring metrics and latent count')
+        net.train()
+    elif args.dataset == 'celeba':
+        net = TrainerNonSynVAECelebA(args, dataloader, device, test_imgs)
+        print('Training Non-Syn VAE, plotting traverse plots for dataset: celeba')
+        net.train()
+    else:
+        net = TrainerNonSynVAE(args, dataloader, device, test_imgs, dataloader_gt)
+        print('Training Non-Syn VAE, plotting the GT plots and traverse plots; dataset: dsprites')
         net.train()
 
-    if args.metric == "1B":
-
-        net = Trainer1B(args, dataloader, device, test_imgs)
-        net.train()
-
-    if args.metric == "1C":
-
-        net = Trainer1C(args, dataloader, device, test_imgs)
-        net.train()
-
-    if args.metric == "1D":
-
-        net = Trainer1D(args, dataloader, device, test_imgs)
-        net.train()
-
-    if args.metric == "1B_MLP":
-
-        net = Trainer1B_MLP(args, dataloader, device, test_imgs)
-        net.train()
-
-    if args.metric == "1E":
-
-        net = Trainer1E(args, dataloader, device, test_imgs)
-        net.train()
-
-    if args.metric == "1E_MLP":
-
-        net = Trainer1E_MLP(args, dataloader, device, test_imgs)
-        net.train()
-
-    if args.metric == "1F":
-
-        net = Trainer1F(args, dataloader, device, test_imgs)
-        net.train()
-
-    if args.metric == "1F_MLP":
-
-        net = Trainer1F_MLP(args, dataloader, device, test_imgs)
-        net.train()
-
-
-    if args.metric == "test":
-
-        net = Trainer1F_test(args, dataloader, device, test_imgs)
-        net.train()
-
-    if args.metric == "BVAE":
-
-        net = Trainer_BVAE(args, dataloader, device, test_imgs, dataloader_gt)
-        net.train()
-
-    if args.metric == "Celeba_faces_1F":
-
-        net = Trainer1F_celeba(args, dataloader, device, test_imgs)
-        net.train()
-
-    if args.metric == "Test_gt":
-
-        net = Trainer1F_gt(args, dataloader, device, test_imgs, dataloader_gt)
-        net.train()
-
-    if args.metric == "VAE":
-
-        net = Trainer_VAE(args, dataloader, device, test_imgs, dataloader_gt)
-        net.train()
-
-    if args.metric == "VAE_gt":
-
-        net = Trainer_VAE_gt(args, dataloader, device, test_imgs, dataloader_gt)
-        net.train()
-
-    if args.metric == "Factor":
-
-        net = Trainer_Factor(args, dataloader, device, test_imgs, dataloader_gt)
-        net.train()
-
-    if args.metric == "BVAE_gt":
-
-        net = Trainer_BVAE_gt(args, dataloader, device, test_imgs, dataloader_gt)
-        net.train()
-
-    if args.metric == "test_metric":
-
-        net = Trainer1F_metricFactor(args, dataloader, device, test_imgs, dataloader_gt)
-        net.train()
-
-    if args.metric == "BVAE_capacity":
-
-        net = Trainer_BVAE_capacity(args, dataloader, device, test_imgs, dataloader_gt)
-        net.train()
-
-    if args.metric == "Celeba_faces":
-        net = Trainer1F_celeba_VAE(args, dataloader, device, test_imgs)
-        net.train()
-
-    if args.metric == "Celeba_faces_factor":
-        net = Trainer1F_celeba_factorVAE(args, dataloader, device, test_imgs)
-        net.train()
 
 if __name__ == "__main__":
     main()
