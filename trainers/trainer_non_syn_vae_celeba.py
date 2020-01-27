@@ -8,8 +8,7 @@ import os
 from utils.ops import kl_div, kl_div_uni_dim, recon_loss_faces
 from utils.utils import traverse_faces
 from models.model_vae_celeba import VAECelebA
-
-from test import greedy_policy_Smax_discount_worst
+from utils.syn_ops import greedy_policy_s_max_discount_worst
 torch.set_printoptions(precision=6)
 
 
@@ -35,11 +34,9 @@ class TrainerNonSynVAECelebA:
         self.beta1_VAE = args.beta1_VAE
         self.beta2_VAE = args.beta2_VAE
 
-
         self.VAE = VAECelebA(self.z_dim).to(self.device)
         self.optim_VAE = optim.Adam(self.VAE.parameters(), lr=self.lr_VAE,
                                     betas=(self.beta1_VAE, self.beta2_VAE))
-
 
         self.alpha = args.alpha
         self.omega = args.omega
@@ -90,8 +87,8 @@ class TrainerNonSynVAECelebA:
                 # Synergy Max
 
                 # Step 1: compute the arg-max of D kl (q(ai | x(i)) || )
-                best_ai, worst_ai = greedy_policy_Smax_discount_worst(self.z_dim, mu_prime,
-                                                                      log_var_prime, alpha=self.omega)
+                best_ai, worst_ai = greedy_policy_s_max_discount_worst(self.z_dim, mu_prime, log_var_prime,
+                                                                       alpha=self.omega)
 
                 c.update(best_ai)
                 d.update(worst_ai)
@@ -140,7 +137,7 @@ class TrainerNonSynVAECelebA:
 
                 # Saving
                 if not step % self.args.save_interval:
-                    filename = 'alpha_' + str(self.alpha) + '_traversal_' + str(step) + '.png'
+                    filename = self.dataset + '_alpha_' + str(self.alpha) + '_traversal_' + str(step) + '.png'
                     filepath = os.path.join(self.args.output_dir, filename)
                     traverse_faces(self.net_mode, self.VAE, self.test_imgs, filepath)
 

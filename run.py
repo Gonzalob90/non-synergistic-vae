@@ -34,7 +34,6 @@ def parse():
     parser.add_argument('--omega', default=0.8, type=float, help='coefficient of the greedy policy')
 
     # Synergy
-    parser.add_argument('--metric', default='1B', type=str, help="Synergy metrics")
     parser.add_argument('--policy', default='greedy', type=str, help="policy to use for the Synergy metric")
     parser.add_argument('--epsilon', default=0.05, type=float, help='exploration trade-off for e-greedy policy')
     parser.add_argument('--sample', default='no_sample', type=str, help="sample new values of logvar and mu for the Syn term")
@@ -70,7 +69,7 @@ def parse():
     parser.add_argument('--seq-interval', type=int, default=2000)
 
     # Visdom
-    parser.add_argument('--viz_on', default=True, help='enable visdom visualization')
+    parser.add_argument('--viz_on', default=False, help='enable visdom visualization')
     parser.add_argument('--viz_port', default=8097, type=int, help='visdom port number')
     parser.add_argument('--viz_il_iter', default=20, type=int, help='visdom line data logging iter')
     parser.add_argument('--viz_la_iter', default=100, type=int, help='visdom line data applying iter')
@@ -97,6 +96,7 @@ def main():
     print(f'Using {device}')
 
     # data loader
+    print(f'Using dataset: {args.dataset}')
     img_dims, dataloader = _get_dataset(args.dataset)
     dataloader = dataloader(args.batch_size)
 
@@ -116,15 +116,19 @@ def main():
     if os.path.isdir(args.output_dir): shutil.rmtree(args.output_dir)
     os.makedirs(args.output_dir)
 
-    if args.plots == True:
-        net = TrainerNonSynVAEPlots(args, dataloader, device, test_imgs, dataloader_gt)
+    if args.viz_on:
+        net = TrainerNonSynVAEPlots(args, dataloader, device, test_imgs)
+        print('Training Non-Syn VAE, monitoring metrics and latent count')
         net.train()
     elif args.dataset == 'celeba':
-        net = TrainerNonSynVAE(args, dataloader, device, test_imgs, dataloader_gt)
+        net = TrainerNonSynVAECelebA(args, dataloader, device, test_imgs)
+        print('Training Non-Syn VAE, plotting traverse plots for dataset: celeba')
         net.train()
     else:
         net = TrainerNonSynVAE(args, dataloader, device, test_imgs, dataloader_gt)
+        print('Training Non-Syn VAE, plotting the GT plots and traverse plots; dataset: dsprites')
         net.train()
+
 
 if __name__ == "__main__":
     main()

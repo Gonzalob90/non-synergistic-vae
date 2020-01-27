@@ -90,7 +90,7 @@ class TrainerNonSynVAE:
 
                 # Step 1: compute the arg-max of D kl (q(ai | x(i)) || ) in a greedy way.
                 best_ai, worst_ai = greedy_policy_s_max_discount_worst(self.z_dim, mu_prime, log_var_prime,
-                                                                      alpha=self.omega)
+                                                                       alpha=self.omega)
                 c.update(best_ai)
                 d.update(worst_ai)
 
