@@ -47,12 +47,11 @@ Run the following commands:
 python run.py --alpha=5.0 --omega=0.9 --steps=1200000 --gt-interval=5000 --viz_on=True
 ```
 
-<br>
 You can reproduce the CelebA results running `test_celeba.sh` or using the following command: 
 ```
 python run.py --alpha=5.0 --omega=0.9 --steps=1200000 --dataset=celeba
 ```
-
+It's necessary to place the .zip file with the celeba files in the datasets folder.
 
 ### Results - 2D Shapes(dsprites) Dataset
 
