@@ -27,10 +27,9 @@ Place the file inside the main directory
 ```
 
 ### Usage
-you can reproduce results below as follows
-
+You can reproduce results below running the `test_dsprites.sh` or using the following commands:
 ```
-python run.py --alpha=5.0 --omega=0.9 --metric="Test_gt" --steps=150000 --gt-interval=5000
+python run.py --alpha=5.0 --omega=0.9 --steps=1200000 --gt-interval=5000
 ```
 If you want to visualise the plots in real time:
 
@@ -45,9 +44,15 @@ localhost:8097
 ```
 Run the following commands:
 ```
-python run.py --alpha=5.0 --omega=0.9 --metric="test" --steps=150000 
+python run.py --alpha=5.0 --omega=0.9 --steps=1200000 --gt-interval=5000 --viz_on=True
 ```
+
 <br>
+You can reproduce the CelebA results running `test_celeba.sh` or using the following command: 
+```
+python run.py --alpha=5.0 --omega=0.9 --steps=1200000 --dataset=celeba
+```
+
 
 ### Results - 2D Shapes(dsprites) Dataset
 
